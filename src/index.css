@@ -814,3 +814,21 @@ body{
   .hero-ctas{flex-direction:column}
   .hero-ctas .btn{flex:none; width:100%; font-size:10px}
 }
+
+/* ---- phone polish ---- */
+@media(max-width:760px){
+  /* The fixed HUD frame reads as a stray box drawn around the whole page on a
+     phone — it needs desktop margins to look like a frame rather than a mistake. */
+  .frame{display:none}
+
+  /* breathing room: the selector, headline, intent line and buttons were
+     stacking tight enough to read as one block */
+  .dtabs{margin-bottom:24px}
+  .hero-h{margin-bottom:18px}
+  .hero-sub{margin-bottom:28px}
+  .hero-ctas{gap:14px; margin-bottom:34px}
+  .hero-stats{gap:14px}
+}
+@media(max-width:410px){
+  .hero-ctas{gap:14px}
+}
