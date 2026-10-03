@@ -1,0 +1,24 @@
+{
+  "name": "spherecode-v2",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "SphereCode v2 — mobile-first immersive build.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "three": "^0.160.1",
+    "@react-three/fiber": "^8.15.19",
+    "@react-three/drei": "^9.99.0",
+    "@react-three/postprocessing": "^2.16.2"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.2.1",
+    "vite": "^5.1.6"
+  }
+}
