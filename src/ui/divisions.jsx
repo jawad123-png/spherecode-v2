@@ -5,20 +5,21 @@
    ===================================================================== */
 
 /* ---- procedural line-art glyphs (they draw themselves on in) ----
-   Every stroked path needs data-draw and a --len roughly equal to its
-   own path length, which is what the stroke-dashoffset cascade animates. */
+   Every stroked element carries data-draw and pathLength="1". pathLength makes
+   the browser treat the shape as exactly 1 unit long whatever its real geometry,
+   so the CSS can dash it with 1/1 and never come out broken into segments. */
 
 function GlyphWeb() {
   return (
     <svg viewBox="0 0 104 84" role="img" aria-label="Web development">
-      <rect data-draw style={{ '--len': 300 }} x="6" y="10" width="92" height="64" rx="5" />
-      <path data-draw style={{ '--len': 92, animationDelay: '.18s' }} d="M6 26 H98" />
+      <rect data-draw pathLength="1" x="6" y="10" width="92" height="64" rx="5" />
+      <path data-draw pathLength="1" d="M6 26 H98" />
       <circle data-fill cx="16" cy="18" r="2.4" />
       <circle data-fill cx="24" cy="18" r="2.4" />
       <circle data-fill cx="32" cy="18" r="2.4" />
-      <path data-draw style={{ '--len': 46, animationDelay: '.42s' }} d="M42 40 L32 52 L42 64" />
-      <path data-draw style={{ '--len': 46, animationDelay: '.52s' }} d="M62 40 L72 52 L62 64" />
-      <path data-draw style={{ '--len': 30, animationDelay: '.64s' }} d="M55 38 L49 66" />
+      <path data-draw pathLength="1" d="M42 40 L32 52 L42 64" />
+      <path data-draw pathLength="1" d="M62 40 L72 52 L62 64" />
+      <path data-draw pathLength="1" d="M55 38 L49 66" />
     </svg>
   )
 }
@@ -28,7 +29,7 @@ function GlyphBpo() {
   const seats = [0, 60, 120, 180, 240, 300]
   return (
     <svg viewBox="0 0 104 84" role="img" aria-label="BPO services">
-      <circle data-draw style={{ '--len': 150 }} cx="52" cy="42" r="23" />
+      <circle data-draw pathLength="1" cx="52" cy="42" r="23" />
       <circle data-fill cx="52" cy="42" r="7" />
       {seats.map((deg, i) => {
         const r = (deg * Math.PI) / 180
@@ -36,9 +37,9 @@ function GlyphBpo() {
         const y = 42 + Math.sin(r) * 29
         return (
           <g key={deg}>
-            <path data-draw style={{ '--len': 40, animationDelay: 0.2 + i * 0.07 + 's' }}
+            <path data-draw pathLength="1"
               d={`M${52 + Math.cos(r) * 23} ${42 + Math.sin(r) * 23} L${x} ${y}`} />
-            <circle data-pulse cx={x} cy={y} r="4.6" fill="rgb(var(--dc))" style={{ animationDelay: i * 0.3 + 's' }} />
+            <circle data-pulse cx={x} cy={y} r="4.6" fill="rgb(var(--dc))" />
           </g>
         )
       })}
@@ -50,16 +51,16 @@ function GlyphVa() {
   /* a cleared checklist + the clock it gives you back */
   return (
     <svg viewBox="0 0 104 84" role="img" aria-label="Virtual assistants">
-      <rect data-draw style={{ '--len': 230 }} x="10" y="8" width="56" height="68" rx="5" />
-      <path data-draw style={{ '--len': 24, animationDelay: '.16s' }} d="M28 8 h20" />
+      <rect data-draw pathLength="1" x="10" y="8" width="56" height="68" rx="5" />
+      <path data-draw pathLength="1" d="M28 8 h20" />
       {[26, 40, 54].map((y, i) => (
         <g key={y}>
-          <path data-draw style={{ '--len': 16, animationDelay: 0.3 + i * 0.12 + 's' }} d={`M20 ${y} l4 4 l7 -8`} />
-          <path data-draw style={{ '--len': 22, animationDelay: 0.38 + i * 0.12 + 's' }} d={`M37 ${y + 1} H56`} />
+          <path data-draw pathLength="1" d={`M20 ${y} l4 4 l7 -8`} />
+          <path data-draw pathLength="1" d={`M37 ${y + 1} H56`} />
         </g>
       ))}
-      <circle data-draw style={{ '--len': 110, animationDelay: '.7s' }} cx="80" cy="56" r="17" />
-      <path data-draw style={{ '--len': 26, animationDelay: '.9s' }} d="M80 46 V56 L88 60" />
+      <circle data-draw pathLength="1" cx="80" cy="56" r="17" />
+      <path data-draw pathLength="1" d="M80 46 V56 L88 60" />
       <circle data-fill cx="80" cy="56" r="2" />
     </svg>
   )

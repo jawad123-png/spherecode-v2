@@ -95,9 +95,9 @@ function DivisionCard({ d, on, onPick }) {
     >
       <span className="divc-top">
         <span className="divc-code">{d.code}</span>
-        <span className="divc-state">{on ? 'Viewing' : 'Switch'}</span>
+        <span className="divc-state">{on ? 'Selected' : 'Select'}</span>
       </span>
-      <span className="divc-glyph">{d.glyph}</span>
+      <span className="glyphbox divc-glyph">{d.glyph}</span>
       <span className="divc-verb">{d.verb}</span>
       <span className="divc-name">{d.name}</span>
       <span className="divc-blurb">{d.blurb}</span>
@@ -117,12 +117,14 @@ function DivTabs({ active, cycling, onPick }) {
         return (
           <button
             key={x.key} type="button" role="tab" aria-selected={on}
-            className={'dtab' + (on ? ' on' : '')} style={{ '--dt': x.accRgb }}
+            className={'dtab' + (on ? ' on' : '')}
+            style={{ '--dt': x.accRgb, '--dc': x.accRgb }}
             onClick={() => onPick(x.key)}
           >
-            <span className="dt-dot" />
+            <span className="glyphbox dt-glyph">{x.glyph}</span>
             <span className="dt-full">{x.name}</span>
             <span className="dt-short">{x.short}</span>
+            <span className="dt-state">{on ? 'Selected' : 'Select'}</span>
             {on && cycling && <span className="dt-prog" key={active} />}
           </button>
         )
@@ -430,8 +432,10 @@ export default function Site() {
       const max = document.documentElement.scrollHeight - window.innerHeight
       document.documentElement.style.setProperty('--scrollp', max > 0 ? (window.scrollY / max).toFixed(4) : '0')
 
-      const sw = document.getElementById('divisions')
-      setRail(sw ? sw.getBoundingClientRect().bottom < 90 : false)
+      // the division picker should follow you for the whole page, so it appears
+      // the moment the hero (which holds the other picker) scrolls away
+      const hero = document.getElementById('top')
+      setRail(hero ? hero.getBoundingClientRect().bottom < 80 : false)
     }
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(paint) }
     paint()

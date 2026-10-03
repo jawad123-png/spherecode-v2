@@ -558,16 +558,35 @@ body{
   padding:4px 9px; border:1px solid var(--line); color:var(--faint); white-space:nowrap}
 .divc.on .divc-state{border-color:rgb(var(--dc)); color:#04141a; background:rgb(var(--dc)); font-weight:700}
 
-/* procedural division glyph — draws itself in when revealed */
-.divc-glyph{width:100%; height:94px; position:relative; z-index:2}
-.divc-glyph svg{width:auto; height:100%; display:block; overflow:visible}
-.divc-glyph [data-draw]{fill:none; stroke:rgb(var(--dc)); stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round;
-  stroke-dasharray:var(--len,300); stroke-dashoffset:var(--len,300); opacity:.9}
-.divc.in .divc-glyph [data-draw],.divc.on .divc-glyph [data-draw],.divc:hover .divc-glyph [data-draw]{animation:gdraw 1.15s cubic-bezier(.4,0,.2,1) forwards}
-@keyframes gdraw{to{stroke-dashoffset:0}}
-.divc-glyph [data-fill]{fill:rgb(var(--dc)); opacity:0; transition:opacity .5s .9s}
-.divc.in .divc-glyph [data-fill],.divc.on .divc-glyph [data-fill],.divc:hover .divc-glyph [data-fill]{opacity:.55}
-.divc-glyph [data-pulse]{animation:gpulse 2.6s ease-in-out infinite}
+/* ---- shared line-art glyph (hero tiles + division cards) ----
+   DEFAULT STATE IS FULLY DRAWN. The draw-on is an enhancement layered on top,
+   so if the animation never runs — reduced motion, a missed observer, an old
+   browser — the glyph is still there. It used to default to invisible and rely
+   on the animation firing, which is why they came up blank on mobile.
+   Every element carries pathLength="1", so dasharray:1 is exactly one full
+   shape no matter its real geometry (hand-measured lengths were off, which
+   chopped the longer paths into dashes). */
+.glyphbox{position:relative; z-index:2}
+.glyphbox svg{width:auto; height:100%; display:block; overflow:visible}
+.glyphbox [data-draw]{fill:none; stroke:rgb(var(--dc)); stroke-width:1.5;
+  stroke-linecap:round; stroke-linejoin:round; opacity:.9;
+  stroke-dasharray:1; stroke-dashoffset:0}
+.glyphbox [data-fill]{fill:rgb(var(--dc)); opacity:.55}
+.glyphbox [data-pulse]{animation:gpulse 2.6s ease-in-out infinite}
+
+.divc-glyph{width:100%; height:94px}
+/* The cards draw themselves on as they scroll in. Deliberately NO fill-mode:
+   the animation runs from hidden to drawn and then hands back to the base rule
+   above, which is already the drawn state. So a stall, a skipped frame or a
+   browser that never starts it all end the same way — glyph visible. An earlier
+   version used fill-mode:both with staggered delays, which parked the paths on
+   their hidden first frame whenever the animation did not complete. */
+@media(prefers-reduced-motion:no-preference){
+  .divc.in .glyphbox [data-draw]{animation:gdraw 1.1s cubic-bezier(.4,0,.2,1)}
+  .divc.in .glyphbox [data-fill]{animation:gfill 1.1s ease}
+}
+@keyframes gdraw{from{stroke-dashoffset:1} to{stroke-dashoffset:0}}
+@keyframes gfill{from{opacity:0} to{opacity:.55}}
 @keyframes gpulse{0%,100%{opacity:.25}50%{opacity:.9}}
 
 .divc-name{font-family:'Syne',sans-serif; font-weight:800; font-size:clamp(23px,3.1vw,30px); text-transform:uppercase;
@@ -584,7 +603,6 @@ body{
   .divc:hover{transform:none; border-color:var(--line)}
   .divc:hover::after{opacity:0}
   .divc:not(.on):hover .divc-foot{color:var(--faint)}
-  .divc-glyph [data-draw]{stroke-dashoffset:0}
 }
 
 /* the switch itself — content fades/slides as the division changes */
@@ -741,32 +759,42 @@ body{
 @media(max-width:400px){.hero-h{font-size:clamp(30px,9.6vw,46px)}}
 
 
-/* ---- hero division tabs ----
-   The switcher lives in the hero, so the whole-page morph happens on screen and
-   all three divisions are visible before the visitor scrolls anywhere. */
-.dtabs{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px}
-.dtab{position:relative; display:inline-flex; align-items:center; gap:9px; padding:10px 15px;
-  border:1px solid var(--line); background:rgba(8,14,26,.45); backdrop-filter:blur(4px);
-  font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.17em; text-transform:uppercase;
-  color:var(--dim); cursor:none; overflow:hidden; transition:color .4s, border-color .4s, background .4s}
-.dtab:hover{color:rgb(var(--dt)); border-color:rgba(var(--dt),.5)}
+/* ---- hero division selector ----
+   Three glyph tiles rather than text pills: all three divisions are visible and
+   legible at a glance, and the switch happens where the visitor is looking. */
+.dtabs{display:grid; grid-template-columns:repeat(3,1fr); gap:9px; margin-bottom:22px; max-width:530px}
+.dtab{position:relative; display:flex; flex-direction:column; align-items:center; gap:9px;
+  padding:15px 8px 12px; border:1px solid var(--line); background:rgba(8,14,26,.5); backdrop-filter:blur(5px);
+  color:var(--dim); cursor:none; overflow:hidden; text-align:center;
+  transition:color .4s, border-color .4s, background .4s, transform .4s}
+.dtab:hover{color:rgb(var(--dt)); border-color:rgba(var(--dt),.5); transform:translateY(-3px)}
 .dtab.on{color:rgb(var(--dt)); border-color:rgb(var(--dt)); background:rgba(var(--dt),.08)}
 .dtab:focus-visible{outline:1px solid rgb(var(--dt)); outline-offset:3px}
-.dt-dot{width:6px; height:6px; border-radius:50%; background:currentColor; opacity:.55; flex:none; transition:opacity .4s}
-.dtab.on .dt-dot{opacity:1; box-shadow:0 0 9px currentColor; animation:pulse 2.4s ease-in-out infinite}
+
+.dt-glyph{height:44px; transition:opacity .45s}
+.dtab:not(.on) .dt-glyph{opacity:.4}
+.dtab:hover .dt-glyph{opacity:.8}
+.dtab.on .dt-glyph{opacity:1}
+
+.dt-full,.dt-short{font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:.13em;
+  text-transform:uppercase; line-height:1.35}
 .dt-short{display:none}
-/* the bar fills over one auto-cycle, so it is obvious the hero is rotating */
+.dt-state{font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--faint); transition:color .4s}
+.dtab.on .dt-state{color:rgb(var(--dt))}
+/* fills over one auto-cycle so it is obvious the hero is rotating */
 .dt-prog{position:absolute; left:0; bottom:0; height:2px; width:0; background:rgb(var(--dt)); opacity:.85;
   animation:dtprog 7s linear forwards}
 @keyframes dtprog{to{width:100%}}
 @media(prefers-reduced-motion:reduce){.dt-prog{display:none}}
+@media(hover:none){.dtab:hover{transform:none; border-color:var(--line)} .dtab:not(.on):hover .dt-glyph{opacity:.4}}
 @media(max-width:620px){
-  .dtabs{gap:6px}
-  .dtab{padding:10px 13px; letter-spacing:.14em; flex:1; justify-content:center}
+  .dtabs{gap:7px; max-width:none}
+  .dtab{padding:13px 5px 10px; gap:7px}
+  .dt-glyph{height:38px}
   .dt-full{display:none}
-  .dt-short{display:inline}
+  .dt-short{display:block; font-size:10px; letter-spacing:.16em}
 }
-
 
 /* ---- mobile hero: one line per headline row, one screen tall ---- */
 @media(max-width:760px){
