@@ -192,7 +192,7 @@ const CHECKS = ['Resolving host', 'Load speed · mobile + desktop', 'Mobile layo
 function AuditMagnet({ d }) {
   const [url, setUrl] = useState('')
   const [email, setEmail] = useState('')
-  const [st, setSt] = useState('idle')   // idle | scan | email | sent
+  const [st, setSt] = useState('idle')   // idle | scan | sent
   const [step, setStep] = useState(0)
   const [err, setErr] = useState('')
 
@@ -202,27 +202,23 @@ function AuditMagnet({ d }) {
     const id = setInterval(() => {
       i++
       setStep(i)
-      if (i >= CHECKS.length) { clearInterval(id); setSt('email') }
-    }, 520)
+      if (i >= CHECKS.length) { clearInterval(id); setSt('sent') }
+    }, 460)
     return () => clearInterval(id)
   }, [st])
 
-  const run = (e) => {
+  const run = async (e) => {
     e.preventDefault()
     if (!url.trim()) { setErr('Enter your website address first.'); return }
-    setErr(''); setStep(0); setSt('scan')
-  }
-
-  const send = async (e) => {
-    e.preventDefault()
     if (!email.trim()) { setErr('We need an email to send the report to.'); return }
-    setErr('')
+    setErr(''); setStep(0); setSt('scan')
+    // send immediately rather than after the animation, so a visitor who taps
+    // away mid-scan is still a captured lead
     try {
       await post({
         _subject: 'SITE AUDIT request — ' + url,
         division: d.name, lead_magnet: 'Free Site Audit', website: url, email,
       })
-      setSt('sent')
     } catch { setErr('Could not send — please email contact@spherecode.dev instead.') }
   }
 
@@ -237,13 +233,17 @@ function AuditMagnet({ d }) {
         </div>
       ) : (
         <>
-          <form className="lm-row" onSubmit={run}>
-            <input
-              aria-label="Your website address" placeholder="yourbusiness.com" value={url}
-              onChange={(e) => setUrl(e.target.value)} disabled={st !== 'idle'} autoComplete="url"
-            />
-            <button type="submit" className="btn btn--primary" disabled={st !== 'idle'}>
-              {st === 'idle' ? 'Run Audit →' : 'Running…'}
+          <form onSubmit={run}>
+            <div className="fg"><label htmlFor="au-url">Your website *</label>
+              <input id="au-url" placeholder="yourbusiness.com" value={url}
+                onChange={(e) => setUrl(e.target.value)} disabled={st !== 'idle'} autoComplete="url" />
+            </div>
+            <div className="fg" style={{ marginTop: 14 }}><label htmlFor="au-email">Where do we send it? *</label>
+              <input id="au-email" type="email" placeholder="you@yourbusiness.com" value={email}
+                onChange={(e) => setEmail(e.target.value)} disabled={st !== 'idle'} autoComplete="email" />
+            </div>
+            <button type="submit" className="btn btn--primary btn--full" style={{ marginTop: 18 }} disabled={st !== 'idle'}>
+              {st === 'idle' ? 'Run My Audit →' : 'Running…'}
             </button>
           </form>
 
@@ -257,16 +257,6 @@ function AuditMagnet({ d }) {
                 </div>
               ))}
             </div>
-          )}
-
-          {st === 'email' && (
-            <form className="lm-row" style={{ marginTop: 18 }} onSubmit={send}>
-              <input
-                type="email" aria-label="Your email" placeholder="you@yourbusiness.com" value={email}
-                onChange={(e) => setEmail(e.target.value)} autoComplete="email" required
-              />
-              <button type="submit" className="btn btn--primary">Get Report →</button>
-            </form>
           )}
 
           {err && <div className="lm-err">{err}</div>}
@@ -362,6 +352,7 @@ function ClinicMock() {
 export default function Site() {
   const [active, setActive] = useState('web')
   const [typed, setTyped] = useState('')
+  const [full, setFull] = useState('')
   const [live, setLive] = useState(false)
   const [menu, setMenu] = useState(false)
   const [rail, setRail] = useState(false)
@@ -452,13 +443,20 @@ export default function Site() {
     const isMobile = () => window.matchMedia('(max-width:760px)').matches || window.matchMedia('(hover:none)').matches
     const paint = () => {
       raf = 0
-      const items = document.querySelectorAll('.cap-row, .frow, .folio')
       const vc = window.innerHeight / 2
-      const band = window.innerHeight * 0.16
       const on = isMobile()
-      for (const el of items) {
-        const r = el.getBoundingClientRect()
-        el.classList.toggle('active', on && Math.abs(r.top + r.height / 2 - vc) < band)
+      const reach = window.innerHeight * 0.4
+      // one winner per list, not a band — a band lit three rows at once, which
+      // read as a gradient rather than "this row is the one you're on"
+      for (const sel of ['.cap-row', '.frow', '.folio']) {
+        const items = [...document.querySelectorAll(sel)]
+        let best = null, bestD = Infinity
+        for (const el of items) {
+          const r = el.getBoundingClientRect()
+          const dist = Math.abs(r.top + r.height / 2 - vc)
+          if (dist < bestD) { bestD = dist; best = el }
+        }
+        for (const el of items) el.classList.toggle('active', on && el === best && bestD < reach)
       }
     }
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(paint) }
@@ -474,7 +472,7 @@ export default function Site() {
     const narrow = window.matchMedia('(max-width:760px)').matches
     const text = (narrow && d.typedShort) || d.typed
     let i = 0, to
-    setTyped('')
+    setTyped(''); setFull(text)
     if (window.matchMedia('(prefers-reduced-motion:reduce)').matches) { setTyped(text); return }
     const tick = () => { i++; setTyped(text.slice(0, i)); if (i < text.length) to = setTimeout(tick, 9) }
     const start = setTimeout(tick, 220)
@@ -543,7 +541,15 @@ export default function Site() {
                 >{l}</button>
               ))}
             </h1>
-            <p className="hero-sub mono">{typed}<span className="care">▍</span></p>
+            <p className="hero-sub mono">
+              {(() => {
+                // the clause before the em-dash is the claim; accent it as it types
+                const cut = full.indexOf('—')
+                const hi = cut < 0 ? 0 : cut
+                return <><b className="hs-hi">{typed.slice(0, Math.min(typed.length, hi))}</b>{typed.slice(Math.min(typed.length, hi))}</>
+              })()}
+              <span className="care">▍</span>
+            </p>
             <div className="hero-ctas">
               <a href="#offer" className="btn btn--primary">{d.lead.nav} →</a>
               <a href="#divisions" className="btn">Explore Divisions</a>

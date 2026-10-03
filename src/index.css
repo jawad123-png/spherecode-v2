@@ -832,3 +832,20 @@ body{
 @media(max-width:410px){
   .hero-ctas{gap:14px}
 }
+
+/* ---- hero intent line ---- */
+.hero-sub{padding-left:15px; border-left:1px solid rgba(var(--acc-rgb),.32)}
+.hs-hi{color:var(--cyan); font-weight:500}
+
+/* ---- phone: the centred service row opens, the way hover does on desktop ----
+   The description was simply hidden on mobile, so the scroll-highlight had
+   nothing to reveal and read as a colour change for no reason. */
+@media(max-width:760px){
+  .hero-sub{font-size:12.5px; line-height:1.8; padding-left:13px}
+  .cap-row{padding:24px 12px}
+  .cap-d{display:block; grid-column:2; grid-row:2; max-width:none; font-size:13px;
+    max-height:0; opacity:0; overflow:hidden; margin-top:0;
+    transition:max-height .5s cubic-bezier(.16,.8,.2,1), opacity .4s ease, margin-top .5s ease}
+  .cap-row.active .cap-d{max-height:160px; opacity:1; margin-top:10px}
+  .cap-row.active{background:rgba(var(--acc-rgb),.05)}
+}
