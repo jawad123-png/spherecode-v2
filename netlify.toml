@@ -1,0 +1,9 @@
+# Netlify builds this site from source on every push to main.
+# Leave VITE_BASE unset here: vite.config.js then defaults base to '/',
+# which is what spherecode.dev needs. Only GitHub Pages overrides it.
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
