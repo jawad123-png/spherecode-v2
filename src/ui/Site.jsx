@@ -431,7 +431,7 @@ export default function Site() {
     const id = setTimeout(() => {
       const i = DIVISIONS.findIndex((x) => x.key === active)
       setActive(DIVISIONS[(i + 1) % DIVISIONS.length].key)
-    }, 7000)
+    }, 4200)
     return () => clearTimeout(id)
   }, [cycling, active])
 
@@ -462,9 +462,16 @@ export default function Site() {
       document.documentElement.style.setProperty('--scrollp', max > 0 ? (window.scrollY / max).toFixed(4) : '0')
 
       // the division picker should follow you for the whole page, so it appears
-      // the moment the hero (which holds the other picker) scrolls away
+      // the moment the hero (which holds the other picker) scrolls away.
+      // heroIn comes from the same measurement: an IntersectionObserver ratio
+      // threshold is unreliable here, because a hero taller than the viewport
+      // can never reach it and the auto-cycle would quietly never start.
       const hero = document.getElementById('top')
-      setRail(hero ? hero.getBoundingClientRect().bottom < 80 : false)
+      if (hero) {
+        const hr = hero.getBoundingClientRect()
+        setRail(hr.bottom < 80)
+        setHeroIn(hr.bottom > 120)
+      } else { setRail(false) }
     }
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(paint) }
     paint()
@@ -512,7 +519,7 @@ export default function Site() {
     let i = 0, to
     setTyped(''); setFull(text)
     if (window.matchMedia('(prefers-reduced-motion:reduce)').matches) { setTyped(text); return }
-    const tick = () => { i++; setTyped(text.slice(0, i)); if (i < text.length) to = setTimeout(tick, 9) }
+    const tick = () => { i++; setTyped(text.slice(0, i)); if (i < text.length) to = setTimeout(tick, 7) }
     const start = setTimeout(tick, 220)
     return () => { clearTimeout(start); clearTimeout(to) }
   }, [d, active])
@@ -523,11 +530,7 @@ export default function Site() {
     return () => io.disconnect()
   }, [])
 
-  useEffect(() => {
-    const io = new IntersectionObserver((es) => setHeroIn(es[0].isIntersecting), { threshold: 0.35 })
-    if (heroRef.current) io.observe(heroRef.current)
-    return () => io.disconnect()
-  }, [])
+
 
   /* section numbers stay sequential even though the deep-dive differs per division */
   let sn = 0
@@ -867,7 +870,7 @@ export default function Site() {
         </div>
         <div className="foot-mark">SPHERECODE</div>
         <div className="foot-bottom mono">
-          <span>© 2026 SphereCode. All rights reserved.</span>
+          <span>© 2026 SphereCode Solutions. All rights reserved.</span>
           <span><a href="#">Privacy Policy</a> · <a href="#">Terms of Service</a></span>
         </div>
       </footer>

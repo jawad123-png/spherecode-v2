@@ -796,7 +796,7 @@ body{
 .dtab.on .dt-state{color:rgb(var(--dt))}
 /* fills over one auto-cycle so it is obvious the hero is rotating */
 .dt-prog{position:absolute; left:0; bottom:0; height:2px; width:0; background:rgb(var(--dt)); opacity:.85;
-  animation:dtprog 7s linear forwards}
+  animation:dtprog 4.2s linear forwards}
 @keyframes dtprog{to{width:100%}}
 @media(prefers-reduced-motion:reduce){.dt-prog{display:none}}
 @media(hover:none){.dtab:hover{transform:none; border-color:var(--line)} .dtab:not(.on):hover .dt-glyph{opacity:.4}}
