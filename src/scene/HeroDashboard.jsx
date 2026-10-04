@@ -28,12 +28,36 @@ export function useCount(target, run, dur = 1600, dec = 0) {
   return dec ? v.toFixed(dec) : Math.round(v)
 }
 
+/* Orders that stream in while you watch — the panel keeps moving instead of
+   animating once and freezing, which is what made it feel like a screenshot. */
+const ORDERS = [
+  { n: 'Summer Jacket', q: '1 item', v: '$128', c: 'linear-gradient(135deg,var(--cyan),var(--pink))' },
+  { n: 'Graphic Tee', q: '2 items', v: '$64', c: 'linear-gradient(135deg,var(--pink),var(--cyan))' },
+  { n: 'Canvas Tote', q: '1 item', v: '$42', c: 'linear-gradient(135deg,var(--cyan),#3ee6a0)' },
+  { n: 'Wool Scarf', q: '3 items', v: '$96', c: 'linear-gradient(135deg,#3ee6a0,var(--pink))' },
+  { n: 'Denim Jacket', q: '1 item', v: '$156', c: 'linear-gradient(135deg,var(--pink),#3ee6a0)' },
+]
+
 export default function HeroDashboard() {
   const ref = useRef(null)
   const run = useInView(ref)
-  const rev = useCount(84240, run)
+  const rev0 = useCount(84240, run)
   const conv = useCount(4.8, run, 1600, 1)
-  const orders = useCount(1243, run)
+  const ord0 = useCount(1243, run)
+  const [beat, setBeat] = useState(0)
+
+  // keeps ticking for as long as the panel is on screen
+  useEffect(() => {
+    if (!run) return
+    if (window.matchMedia('(prefers-reduced-motion:reduce)').matches) return
+    const id = setInterval(() => setBeat((b) => b + 1), 2600)
+    return () => clearInterval(id)
+  }, [run])
+
+  const rev = rev0 + beat * 316
+  const orders = ord0 + beat * 3
+  const top = ORDERS[beat % ORDERS.length]
+  const prev = ORDERS[(beat + ORDERS.length - 1) % ORDERS.length]
 
   return (
     <div className="dash-wrap" ref={ref}>
@@ -49,9 +73,14 @@ export default function HeroDashboard() {
           </div>
 
           <div className="dash-metrics">
-            <div className="dm"><span className="dm-l mono">Revenue</span><span className="dm-v">${Number(rev).toLocaleString()}</span><span className="dm-d up">↑ 143%</span></div>
-            <div className="dm"><span className="dm-l mono">Conv. Rate</span><span className="dm-v">{conv}%</span><span className="dm-d up">↑ 0.8pp</span></div>
-            <div className="dm"><span className="dm-l mono">Orders</span><span className="dm-v">{Number(orders).toLocaleString()}</span><span className="dm-d up">↑ 67%</span></div>
+            <div className="dm"><span className="dm-l mono">Revenue</span>
+              <span className="dm-v" key={rev}>${Number(rev).toLocaleString()}</span>
+              <span className="dm-d up">↑ 143%</span></div>
+            <div className="dm"><span className="dm-l mono">Conv. Rate</span>
+              <span className="dm-v">{conv}%</span><span className="dm-d up">↑ 0.8pp</span></div>
+            <div className="dm"><span className="dm-l mono">Orders</span>
+              <span className="dm-v" key={orders}>{Number(orders).toLocaleString()}</span>
+              <span className="dm-d up">↑ 67%</span></div>
           </div>
 
           <div className="dash-chart">
@@ -65,15 +94,25 @@ export default function HeroDashboard() {
               </defs>
               <line x1="0" y1="20" x2="300" y2="20" /><line x1="0" y1="40" x2="300" y2="40" /><line x1="0" y1="60" x2="300" y2="60" />
               <path className="dc-area" d="M0,72 C40,64 70,58 100,46 C130,34 150,52 180,30 C210,10 240,24 270,10 L300,6 L300,80 L0,80 Z" />
-              <path className="dc-line" d="M0,72 C40,64 70,58 100,46 C130,34 150,52 180,30 C210,10 240,24 270,10 L300,6" />
+              <path className="dc-line" pathLength="1" d="M0,72 C40,64 70,58 100,46 C130,34 150,52 180,30 C210,10 240,24 270,10 L300,6" />
               <circle className="dc-dot" cx="300" cy="6" r="3.4" />
+              <circle className="dc-ping" cx="300" cy="6" r="3.4" />
             </svg>
             <div className="dc-labels mono"><span>Wk 1</span><span>Wk 2</span><span>Wk 3</span><span>Wk 4</span></div>
           </div>
 
-          <div className="dash-prod">
-            <div className="dp"><span className="dp-sw" style={{ background: 'linear-gradient(135deg,var(--cyan),var(--pink))' }} /><span className="dp-info"><b>Summer Jacket</b><em className="mono">142 orders</em></span><span className="dp-rev">$8,530</span></div>
-            <div className="dp"><span className="dp-sw" style={{ background: 'linear-gradient(135deg,var(--pink),var(--cyan))' }} /><span className="dp-info"><b>Graphic Tee</b><em className="mono">98 orders</em></span><span className="dp-rev">$3,920</span></div>
+          <div className="dash-feed">
+            <div className="df-h mono"><span>Live orders</span><em>just now</em></div>
+            <div className="dp dp--new" key={beat}>
+              <span className="dp-sw" style={{ background: top.c }} />
+              <span className="dp-info"><b>{top.n}</b><em className="mono">{top.q}</em></span>
+              <span className="dp-rev">{top.v}</span>
+            </div>
+            <div className="dp dp--old">
+              <span className="dp-sw" style={{ background: prev.c }} />
+              <span className="dp-info"><b>{prev.n}</b><em className="mono">{prev.q}</em></span>
+              <span className="dp-rev">{prev.v}</span>
+            </div>
           </div>
         </div>
       </div>

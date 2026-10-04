@@ -82,6 +82,44 @@ async function post(data) {
   if (!res.ok) throw new Error('send failed')
 }
 
+/* ---- social ---- inline SVG, line-art to match the division glyphs rather
+   than dropping brand-coloured logos into a monochrome footer ---- */
+function IconInstagram() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5" />
+      <circle cx="12" cy="12" r="4.1" />
+      <circle cx="17.1" cy="6.9" r="1.15" className="solid" />
+    </svg>
+  )
+}
+function IconLinkedIn() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="3.2" y="3.2" width="17.6" height="17.6" rx="4" />
+      <path d="M7.4 10.9V17" />
+      <circle cx="7.4" cy="7.5" r="1.05" className="solid" />
+      <path d="M11.5 17v-6.1" />
+      <path d="M11.5 13.7a2.55 2.55 0 0 1 5.1 0V17" />
+    </svg>
+  )
+}
+function IconFacebook() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="3.2" y="3.2" width="17.6" height="17.6" rx="4" />
+      <path d="M15 7.8h-1.4a2.1 2.1 0 0 0-2.1 2.1V17.4" />
+      <path d="M9.4 12.2h4.9" />
+    </svg>
+  )
+}
+
+const SOCIAL = [
+  { n: 'Instagram', href: 'https://www.instagram.com/spherecode_/', I: IconInstagram },
+  { n: 'LinkedIn', href: 'https://www.linkedin.com/company/spherecode-solutions/', I: IconLinkedIn },
+  { n: 'Facebook', href: 'https://www.facebook.com/profile.php?id=61594862801595', I: IconFacebook },
+]
+
 /* ===================== division switcher ===================== */
 
 function DivisionCard({ d, on, onPick }) {
@@ -554,11 +592,13 @@ export default function Site() {
               <a href="#offer" className="btn btn--primary">{d.lead.nav} →</a>
               <a href="#divisions" className="btn">Explore Divisions</a>
             </div>
-            <div className="hero-stats">
-              {d.stats.map((s) => <HeroStat key={s.l} s={s} run={live} />)}
-            </div>
           </div>
           <div className="hero-right"><Panel key={active} /></div>
+          {/* own grid cell so the panel can sit above it on a phone — the panel
+              is the thing worth seeing and it was landing dead last */}
+          <div className="hero-stats">
+            {d.stats.map((s) => <HeroStat key={s.l} s={s} run={live} />)}
+          </div>
         </div>
         <a href="#divisions" className="scroll-cue mono">↓ &nbsp;SCROLL</a>
       </section>
@@ -802,6 +842,13 @@ export default function Site() {
           <div className="foot-brand">
             <img src={asset('images/spherecode-logo-nobg.png')} alt="SphereCode" />
             <p>Three divisions, one team — we build your website, run your operations, and staff your admin.</p>
+            <div className="foot-social">
+              {SOCIAL.map(({ n, href, I }) => (
+                <a key={n} href={href} target="_blank" rel="noopener noreferrer" aria-label={'SphereCode on ' + n} title={n}>
+                  <I />
+                </a>
+              ))}
+            </div>
           </div>
           <div className="foot-cols mono">
             <div className="fcol">

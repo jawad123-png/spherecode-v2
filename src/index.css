@@ -93,7 +93,13 @@ body{
 /* ============ HERO ============ */
 .hero{position:relative; min-height:100vh; display:flex; align-items:center; padding:100px clamp(22px,4vw,42px) 58px}
 .hero-inner{width:100%; display:grid; grid-template-columns:1fr; gap:26px; align-items:center}
-@media(min-width:900px){.hero-inner{grid-template-columns:1.08fr .92fr; gap:24px}}
+@media(min-width:900px){
+  .hero-inner{grid-template-columns:1.08fr .92fr; gap:22px 28px; align-items:center}
+  /* desktop keeps the old shape: copy on the left, panel filling the right */
+  .hero-left{grid-column:1; grid-row:1}
+  .hero-stats{grid-column:1; grid-row:2}
+  .hero-right{grid-column:2; grid-row:1 / span 2}
+}
 
 .hero-left{position:relative; z-index:2}
 .hero-eyebrow{display:inline-flex; align-items:center; gap:9px; font-size:10.5px; letter-spacing:.2em; text-transform:uppercase; color:var(--dim); margin-bottom:18px; border:1px solid var(--line); padding:8px 14px}
@@ -139,13 +145,19 @@ body{
 .dc-title{font-size:9.5px; letter-spacing:.07em; color:var(--dim); margin-bottom:10px}
 .dc-svg{width:100%; height:70px; display:block; overflow:visible}
 .dc-svg line{stroke:rgba(var(--acc-rgb),.08); stroke-width:1}
-.dc-area{fill:url(#dg); opacity:0; transition:opacity 1.4s .35s ease}
-.dc-svg.go .dc-area{opacity:1}
-.dc-line{fill:none; stroke:var(--cyan); stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:640; stroke-dashoffset:640; vector-effect:non-scaling-stroke}
-.dc-svg.go .dc-line{animation:draw 1.9s .15s cubic-bezier(.4,0,.2,1) forwards}
-@keyframes draw{to{stroke-dashoffset:0}}
-.dc-dot{fill:#c7f7ff; opacity:0; filter:drop-shadow(0 0 5px var(--cyan))}
-.dc-svg.go .dc-dot{opacity:1; transition:opacity .3s 1.95s ease}
+/* Settled state is the DEFAULT and the intro animates into it. Previously the
+   trend line lived at dashoffset:640 until an animation moved it, so anything
+   that stopped that animation left the chart empty — the same fail-invisible
+   trap as the division glyphs. pathLength="1" also removes the hardcoded 640,
+   which was only ever an estimate of the curve's real length. */
+.dc-area{fill:url(#dg); opacity:1}
+.dc-svg.go .dc-area{animation:dcfade 1.5s ease}
+@keyframes dcfade{from{opacity:0} to{opacity:1}}
+.dc-line{fill:none; stroke:var(--cyan); stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round;
+  stroke-dasharray:1; stroke-dashoffset:0; vector-effect:non-scaling-stroke}
+.dc-svg.go .dc-line{animation:draw 1.8s cubic-bezier(.4,0,.2,1)}
+@keyframes draw{from{stroke-dashoffset:1} to{stroke-dashoffset:0}}
+.dc-dot{fill:#c7f7ff; opacity:1; filter:drop-shadow(0 0 5px var(--cyan))}
 .dc-labels{display:flex; justify-content:space-between; margin-top:8px; font-size:8.5px; letter-spacing:.06em; color:var(--faint)}
 .dash-prod{display:grid; gap:10px}
 .dp{display:flex; align-items:center; gap:11px}
@@ -708,10 +720,10 @@ body{
 /* ---- BPO hero panel: 24h coverage bars + live queue ---- */
 .cov{display:flex; align-items:flex-end; gap:5px; height:70px}
 .cov i{flex:1; background:linear-gradient(180deg, var(--cyan), rgba(var(--acc-rgb),.18)); height:var(--h,60%);
-  transform:scaleY(0); transform-origin:bottom; border-radius:2px 2px 0 0}
-.cov.go i{animation:covup .8s cubic-bezier(.16,.8,.2,1) both}
-@keyframes covup{to{transform:scaleY(1)}}
-@media(prefers-reduced-motion:reduce){.cov i{transform:scaleY(1)} .cov.go i{animation:none}}
+  transform:scaleY(1); transform-origin:bottom; border-radius:2px 2px 0 0}
+.cov.go i{animation:covup .8s cubic-bezier(.16,.8,.2,1)}
+@keyframes covup{from{transform:scaleY(0)} to{transform:scaleY(1)}}
+@media(prefers-reduced-motion:reduce){.cov.go i{animation:none}}
 .qlist{display:grid; gap:1px; border:1px solid var(--line); border-radius:9px; overflow:hidden; background:rgba(4,7,15,.42)}
 .qrow{display:grid; grid-template-columns:1fr auto auto; gap:10px; align-items:center; padding:9px 12px; border-bottom:1px solid var(--line)}
 .qrow:last-child{border-bottom:0}
@@ -754,7 +766,7 @@ body{
 
 /* The three-division headline is longer than the old two-word one —
    scale it so each line stays on one line at every width. */
-.hero-h{font-size:clamp(36px,4.9vw,70px)}
+.hero-h{font-size:clamp(36px,4.5vw,64px)}
 @media(max-width:760px){.hero-h{font-size:clamp(32px,10.2vw,54px); letter-spacing:-.03em}}
 @media(max-width:400px){.hero-h{font-size:clamp(30px,9.6vw,46px)}}
 
@@ -848,4 +860,108 @@ body{
     transition:max-height .5s cubic-bezier(.16,.8,.2,1), opacity .4s ease, margin-top .5s ease}
   .cap-row.active .cap-d{max-height:160px; opacity:1; margin-top:10px}
   .cap-row.active{background:rgba(var(--acc-rgb),.05)}
+}
+
+/* ---- live analytics panel ---- */
+/* every animation below starts from the settled state, so if one never runs
+   the panel still reads correctly — no fail-invisible */
+.dash-feed{border-top:1px solid var(--line); padding-top:13px; display:grid; gap:11px}
+.df-h{display:flex; justify-content:space-between; align-items:center; font-size:9px;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--faint)}
+.df-h em{font-style:normal; color:var(--cyan); display:flex; align-items:center; gap:6px}
+.df-h em::before{content:""; width:5px; height:5px; border-radius:50%; background:var(--cyan);
+  box-shadow:0 0 8px var(--cyan); animation:pulse 1.8s ease-in-out infinite}
+.dp--new{animation:dpin .55s cubic-bezier(.16,.8,.2,1)}
+@keyframes dpin{from{opacity:0; transform:translateY(-12px)} to{opacity:1; transform:none}}
+.dp--old{opacity:.5}
+/* the figure flashes as it changes so the movement is noticed */
+.dm-v{animation:dmflash .7s ease}
+@keyframes dmflash{0%{color:var(--cyan)} 100%{color:var(--ink)}}
+/* a ping radiating off the end of the trend line */
+.dc-ping{fill:none; stroke:var(--cyan); stroke-width:1.4; transform-origin:300px 6px;
+  animation:ping 2.6s ease-out infinite; opacity:0}
+@keyframes ping{0%{transform:scale(1); opacity:.7} 70%,100%{transform:scale(3.4); opacity:0}}
+@media(prefers-reduced-motion:reduce){
+  .dp--new,.dm-v{animation:none}
+  .dc-ping{display:none}
+}
+
+/* phone: the panel is the thing worth looking at, so give it room and lose the
+   floating badges that crowd it at this size */
+@media(max-width:760px){
+  .hero-ctas{margin-bottom:2px}
+  .hero-right{margin-top:0; margin-bottom:26px}
+  .badge{display:none}
+  .dash-body{padding:16px}
+  .dash-feed{padding-top:12px}
+}
+
+/* ================= phone hero: hierarchy pass =================
+   Before this, the two unselected headline lines ran at full size in grey —
+   two-thirds of the biggest type on the screen spent on text that is not
+   about the division you are looking at. They now scale down as well as
+   dim, which frees real vertical space and makes the switch read as the
+   headline physically growing into place. */
+@media(max-width:760px){
+  .hero-h{font-size:clamp(26px,8.6vw,46px); line-height:1.04; margin-bottom:20px}
+  .hero-h button{
+    font-size:.54em; opacity:.3; line-height:1.12; letter-spacing:-.02em;
+    transition:font-size .5s cubic-bezier(.16,.8,.2,1), opacity .4s ease, color .4s ease}
+  .hero-h button.lit{font-size:1em; opacity:1; letter-spacing:-.035em}
+
+  /* Mono is the HUD voice; it is the wrong tool for the one paragraph that has
+     to actually be read on a phone. Sans, bigger, looser. */
+  .hero-sub.mono{font-family:'Space Grotesk',system-ui,sans-serif;
+    font-size:15px; line-height:1.62; letter-spacing:0; padding-left:14px; margin-bottom:26px}
+  .hs-hi{font-weight:600}
+  .hero-sub .care{font-size:.8em; opacity:.7}
+
+  /* One obvious action. The secondary was a box of equal weight fighting it. */
+  .hero-ctas{flex-direction:column; align-items:stretch; gap:14px; margin-bottom:4px}
+  .hero-ctas .btn--primary{width:100%; padding:18px; font-size:11.5px; letter-spacing:.14em}
+  .hero-ctas .btn:not(.btn--primary){
+    width:auto; align-self:center; border:0; background:none; padding:2px 0;
+    font-size:10.5px; letter-spacing:.14em; color:var(--dim);
+    border-bottom:1px solid rgba(238,244,255,.18)}
+}
+@media(max-width:410px){
+  .hero-ctas{flex-direction:column}
+  .hero-ctas .btn{width:auto}
+  .hero-ctas .btn--primary{width:100%}
+}
+
+/* ---- two phone-width bugs ---- */
+
+/* 1. The pod badge is absolutely positioned bottom-right, which is fine while
+      the panel has a fixed aspect-ratio. On phones the panel is auto-height, so
+      the badge landed on top of the last meter row ("Candidates ready" / "SLA
+      met today"). Let it sit in normal flow there instead. */
+@media(max-width:760px){
+  .pod{padding-bottom:16px}
+  .pod-badge{position:static; display:block; width:max-content; margin:16px 0 0 auto}
+}
+
+/* 2. .forms-title had no phone rule at all, so it sat on its clamp floor of
+      34px. Syne 800 runs ~1.15em per uppercase glyph, so a 10-letter word like
+      OVERLOADED needs ~400px and ran off a 362px screen. Scale it by viewport
+      instead of flooring it. */
+.forms-title{font-size:clamp(26px,7.2vw,92px)}
+@media(max-width:760px){
+  .forms-title{font-size:clamp(23px,6.9vw,44px); letter-spacing:-.03em; line-height:.96}
+  .forms-sub{margin-bottom:34px}
+}
+
+/* ---- footer social ---- */
+.foot-social{display:flex; gap:11px; margin-top:20px}
+.foot-social a{display:grid; place-items:center; width:42px; height:42px; flex:none;
+  border:1px solid var(--line); color:var(--dim); text-decoration:none; cursor:none;
+  transition:color .35s, border-color .35s, background .35s, transform .35s}
+.foot-social a:hover{color:var(--cyan); border-color:var(--cyan);
+  background:rgba(var(--acc-rgb),.07); transform:translateY(-3px)}
+.foot-social a:focus-visible{outline:1px solid var(--cyan); outline-offset:3px}
+.foot-social svg{width:19px; height:19px; fill:none; stroke:currentColor; stroke-width:1.5;
+  stroke-linecap:round; stroke-linejoin:round}
+.foot-social svg .solid{fill:currentColor; stroke:none}
+@media(hover:none){
+  .foot-social a:hover{transform:none; color:var(--dim); border-color:var(--line); background:none}
 }
