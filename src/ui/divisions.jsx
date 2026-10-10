@@ -1,3 +1,5 @@
+import { PAGES } from '../seo.js'
+
 /* =====================================================================
    SphereCode — the three divisions.
    All per-division content lives here so copy edits never touch layout.
@@ -68,7 +70,7 @@ function GlyphVa() {
 
 /* ===================================================================== */
 
-export const DIVISIONS = [
+const BASE = [
   /* ------------------------------------------------------------------ */
   {
     key: 'web',
@@ -327,4 +329,10 @@ export const DIVISIONS = [
   },
 ]
 
+/* Each division is merged with its page-level SEO record (slug, title,
+   description, H1 and FAQ) from src/seo.js, which the build-time page
+   generator reads too — so the <head> of /bpo and the FAQ rendered on it
+   can never drift apart. */
+const SEO = Object.fromEntries(PAGES.map((p) => [p.key, p]))
+export const DIVISIONS = BASE.map((d) => ({ ...d, ...SEO[d.key] }))
 export const BY_KEY = Object.fromEntries(DIVISIONS.map((d) => [d.key, d]))

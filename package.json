@@ -3,11 +3,12 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "SphereCode v2 — mobile-first immersive build.",
+  "description": "SphereCode v2 \u2014 mobile-first immersive build.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prebuild": "node scripts/gen-pages.mjs"
   },
   "dependencies": {
     "react": "^18.2.0",

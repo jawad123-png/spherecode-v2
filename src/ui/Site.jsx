@@ -3,6 +3,18 @@ import HeroDashboard, { HeroOps, HeroDesk } from '../scene/HeroDashboard.jsx'
 import { DIVISIONS, BY_KEY } from './divisions.jsx'
 
 const FORM = 'https://formspree.io/f/xjglrypl'
+const BASE = import.meta.env.BASE_URL
+
+/* Which division this URL is. null on the home page, which shows all three
+   and rotates; /web, /bpo and /virtual-assistants are locked to one so the
+   page always matches the <title> a crawler indexed and the ad that sent
+   the visitor. */
+function routeKey() {
+  const path = window.location.pathname.replace(/\/+$/, '')
+  for (const d of DIVISIONS) if (path.endsWith('/' + d.slug)) return d.key
+  return null
+}
+const divHref = (d) => BASE + d.slug
 
 /* Vite rewrites asset URLs in index.html but NOT string literals in JS, so any
    /images/... path has to be joined to the deploy base by hand or it 404s
@@ -21,10 +33,10 @@ const HERO_LINES = ['WE BUILD IT.', 'WE RUN IT.', 'we staff it.']
    the work belongs to.
    --------------------------------------------------------------------- */
 const WORKS = [
-  { t: 'Surkhab Store', tag: 'E-Commerce · Shopify', d: 'A clean, conversion-focused Shopify storefront built for fast browsing and seamless checkout.', href: 'https://surkhab.store', label: 'surkhab.store', img: asset('images/thumb-surkhab.png') },
-  { t: 'FAHHM Engineering', tag: 'Web Design · Construction', d: 'An architecture & construction consultancy — a bold corporate site turning blueprints into an enduring brand presence.', href: 'https://fahhm.co', label: 'fahhm.co', img: asset('images/thumb-fahhm.png') },
-  { t: 'Lumière Studio', tag: 'Web Design · Clinic', d: "Marylebone's premier aesthetics clinic — a refined, trust-first site designed to convert consultations into clients.", href: 'https://lumierestudio13.netlify.app', label: 'lumierestudio13.netlify.app', img: asset('images/thumb-lumiere.png') },
-  { t: 'Clinic Management System', tag: 'Web App · Healthcare', d: 'A full practice-management system for a private clinic — patient queue, records, recalls, operations, inventory, expenses and revenue reporting, with automatic hourly backups.', private: true, label: 'Private · Internal system', img: asset('images/thumb-clinic.png') },
+  { t: 'Surkhab Store', tag: 'E-Commerce · Shopify', d: 'A clean, conversion-focused Shopify storefront built for fast browsing and seamless checkout.', href: 'https://surkhab.store', label: 'surkhab.store', img: asset('images/thumb-surkhab.png'), alt: 'Surkhab Store Shopify storefront built by SphereCode' },
+  { t: 'FAHHM Engineering', tag: 'Web Design · Construction', d: 'An architecture & construction consultancy — a bold corporate site turning blueprints into an enduring brand presence.', href: 'https://fahhm.co', label: 'fahhm.co', img: asset('images/thumb-fahhm.png'), alt: 'FAHHM Engineering construction consultancy website built by SphereCode' },
+  { t: 'Lumière Studio', tag: 'Web Design · Clinic', d: "Marylebone's premier aesthetics clinic — a refined, trust-first site designed to convert consultations into clients.", href: 'https://lumierestudio13.netlify.app', label: 'lumierestudio13.netlify.app', img: asset('images/thumb-lumiere.png'), alt: 'Lumière Studio aesthetics clinic website built by SphereCode' },
+  { t: 'Clinic Management System', tag: 'Web App · Healthcare', d: 'A full practice-management system for a private clinic — patient queue, records, recalls, operations, inventory, expenses and revenue reporting, with automatic hourly backups.', private: true, label: 'Private · Internal system', img: asset('images/thumb-clinic.png'), alt: 'Clinic management system dashboard built by SphereCode' },
 ]
 
 const TESTIMONIALS = [
@@ -124,12 +136,12 @@ const SOCIAL = [
 
 function DivisionCard({ d, on, onPick }) {
   return (
-    <button
-      type="button"
+    <a
+      href={divHref(d)}
       className={'divc reveal' + (on ? ' on' : '')}
       style={{ '--dc': d.accRgb }}
-      aria-pressed={on}
-      onClick={() => onPick(d.key)}
+      aria-current={on ? 'page' : undefined}
+      onClick={(e) => onPick(e, d.key)}
     >
       <span className="divc-top">
         <span className="divc-code">{d.code}</span>
@@ -140,31 +152,31 @@ function DivisionCard({ d, on, onPick }) {
       <span className="divc-name">{d.name}</span>
       <span className="divc-blurb">{d.blurb}</span>
       <span className="divc-foot">{on ? 'Shown below' : 'See this division'} <i>→</i></span>
-    </button>
+    </a>
   )
 }
 
 /* ---- hero division tabs ----
    The switcher now lives in the hero so the page morphs where the visitor is
    actually looking, and all three divisions are advertised before any scroll. */
-function DivTabs({ active, cycling, onPick }) {
+function DivTabs({ active, cycling, onPick, isHome }) {
   return (
     <div className="dtabs" role="tablist" aria-label="Choose a division">
       {DIVISIONS.map((x) => {
         const on = x.key === active
         return (
-          <button
-            key={x.key} type="button" role="tab" aria-selected={on}
+          <a
+            key={x.key} href={divHref(x)} aria-current={on ? 'page' : undefined}
             className={'dtab' + (on ? ' on' : '')}
             style={{ '--dt': x.accRgb, '--dc': x.accRgb }}
-            onClick={() => onPick(x.key)}
+            onClick={(e) => onPick(e, x.key)}
           >
             <span className="glyphbox dt-glyph">{x.glyph}</span>
             <span className="dt-full">{x.name}</span>
             <span className="dt-short">{x.short}</span>
             <span className="dt-state">{on ? 'Selected' : 'Select'}</span>
             {on && cycling && <span className="dt-prog" key={active} />}
-          </button>
+          </a>
         )
       })}
     </div>
@@ -388,12 +400,16 @@ function ClinicMock() {
 /* ===================== the page ===================== */
 
 export default function Site() {
-  const [active, setActive] = useState('web')
+  const [routed] = useState(() => routeKey())  // null on the home page
+  const isHome = routed === null
+  const [active, setActive] = useState(routed || 'web')
   const [typed, setTyped] = useState('')
   const [full, setFull] = useState('')
   const [live, setLive] = useState(false)
   const [menu, setMenu] = useState(false)
+  const [formDiv, setFormDiv] = useState(routed || 'web')
   const [rail, setRail] = useState(false)
+  const [faqOpen, setFaqOpen] = useState(-1)
   const [picked, setPicked] = useState(false)   // visitor chose a division themselves
   const [heroIn, setHeroIn] = useState(true)    // hero still on screen
   const heroRef = useRef(null)
@@ -402,7 +418,7 @@ export default function Site() {
      never touches anything still sees all three. It stops for good the moment
      they pick one, and pauses once they have scrolled past the hero so nothing
      swaps underneath them while they are reading. */
-  const cycling = !picked && heroIn
+  const cycling = isHome && !picked && heroIn
 
   const d = BY_KEY[active]
   const NAV = [['Divisions', '#divisions'], ['Services', '#services'], ['Process', '#process'], ['Pricing', '#pricing'], [d.lead.nav, '#offer']]
@@ -415,13 +431,19 @@ export default function Site() {
   }, [d])
 
   /* switching division: scroll to the top of the swapped content and retype */
-  const pick = (key) => {
+  /* Home switches in place (the morph). A division page is a real page, so
+     picking a different division navigates there — the URL, <title> and
+     content stay in agreement. Re-picking the current one just scrolls. */
+  const pick = (e, key) => {
+    if (!isHome && key !== active) return   // let the browser follow the link
+    e?.preventDefault?.()
     setPicked(true)
     if (key === active) {
       document.getElementById('services')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       return
     }
     setActive(key)
+    setFormDiv(key)
   }
 
   /* auto-cycle */
@@ -575,13 +597,18 @@ export default function Site() {
       <section className="hero" id="top" ref={heroRef}>
         <div className="hero-inner">
           <div className="hero-left">
-            <DivTabs active={active} cycling={cycling} onPick={pick} />
+            <DivTabs active={active} cycling={cycling} onPick={pick} isHome={isHome} />
             <h1 className="hero-h">
+              {/* The visible H1 is a slogan with no keywords in it. This gives
+                  the heading a plain description of the page for crawlers and
+                  screen readers — same text for both, nothing hidden from one
+                  and shown to the other. */}
+              <span className="sr-only">{d.h1}</span>
               {HERO_LINES.map((l, i) => (
                 <button
                   key={l} type="button" aria-label={'Show ' + DIVISIONS[i].name}
                   className={(i === 2 ? 'ital ' : '') + (i === d.line ? 'lit' : '')}
-                  onClick={() => pick(DIVISIONS[i].key)}
+                  onClick={(e) => { if (isHome || DIVISIONS[i].key === active) pick(e, DIVISIONS[i].key); else window.location.href = divHref(DIVISIONS[i]) }}
                 >{l}</button>
               ))}
             </h1>
@@ -751,7 +778,7 @@ export default function Site() {
                   <div className="folio-bar"><span /><span /><span /><em className="mono">{w.label}</em></div>
                   {w.private && w.t.startsWith('Clinic')
                     ? <div className="folio-shot folio-shot--mock"><ClinicMock /></div>
-                    : <div className="folio-shot" style={{ backgroundImage: `url(${w.img})` }} />}
+                    : <div className="folio-shot"><img src={w.img} alt={w.alt} loading="lazy" /></div>}
                 </div>
                 <div className="folio-info">
                   <span className="folio-tag mono">{w.tag}</span>
@@ -780,6 +807,25 @@ export default function Site() {
                 <div className="tst-av" style={{ background: 'linear-gradient(135deg,var(--cyan),var(--pink))' }} />
                 <div><strong>{t.n}</strong><span>{t.r}</span></div>
               </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* FAQ — real questions people search for, and the answers stay in the
+          DOM when collapsed so crawlers read them either way. */}
+      <section className="section" id="faq">
+        <div className="sec-head mono"><span>{sec()}</span><span>Common Questions · {d.short}</span></div>
+        <div className="faq swap" key={active + '-faq'}>
+          {d.faq.map(([q, a], i) => (
+            <div className={'faq-item' + (faqOpen === i ? ' on' : '')} key={q}>
+              <button
+                type="button" className="faq-q" aria-expanded={faqOpen === i}
+                onClick={() => setFaqOpen(faqOpen === i ? -1 : i)}
+              >
+                <span>{q}</span><i aria-hidden="true">+</i>
+              </button>
+              <div className="faq-a"><p>{a}</p></div>
             </div>
           ))}
         </div>
@@ -824,15 +870,15 @@ export default function Site() {
             <div className="fg"><label htmlFor="email">Email *</label><input type="email" id="email" name="email" placeholder="jane@yourbusiness.com" required /></div>
             <div className="fg">
               <label htmlFor="division">Which division? *</label>
-              <select id="division" name="division" required value={active} onChange={(e) => pick(e.target.value)}>
+              <select id="division" name="division" required value={formDiv} onChange={(e) => { setFormDiv(e.target.value); if (isHome) { setPicked(true); setActive(e.target.value) } }}>
                 {DIVISIONS.map((x) => <option key={x.key} value={x.key}>{x.name}</option>)}
               </select>
             </div>
             <div className="fg">
               <label htmlFor="need">What do you need? *</label>
-              <select id="need" name="need" required defaultValue="" key={active}>
+              <select id="need" name="need" required defaultValue="" key={formDiv}>
                 <option value="" disabled>Select a service</option>
-                {ENQUIRY[active].map((o) => <option key={o}>{o}</option>)}
+                {ENQUIRY[formDiv].map((o) => <option key={o}>{o}</option>)}
               </select>
             </div>
             <div className="fg"><label htmlFor="message">Tell us about it *</label><textarea id="message" name="message" rows="4" placeholder="What do you need, what have you tried, and when do you want to start?" required /></div>
@@ -860,12 +906,12 @@ export default function Site() {
             <div className="fcol">
               <h5>Divisions</h5>
               {DIVISIONS.map((x) => (
-                <a key={x.key} href="#services" onClick={() => pick(x.key)}>{x.name}</a>
+                <a key={x.key} href={divHref(x)} onClick={(e) => pick(e, x.key)}>{x.name}</a>
               ))}
             </div>
-            <div className="fcol"><h5>Free Offers</h5>
+            <div className="fcol"><h5>Offers</h5>
               {DIVISIONS.map((x) => (
-                <a key={x.key} href="#offer" onClick={() => pick(x.key)}>{x.lead.label}</a>
+                <a key={x.key} href={divHref(x) + '#offer'} onClick={(e) => pick(e, x.key)}>{x.lead.label}</a>
               ))}
             </div>
             <div className="fcol"><h5>Company</h5><a href="#work">Portfolio</a><a href="#pricing">Pricing</a><a href="#contact">Contact</a><a href="#top">Top ↑</a></div>
@@ -881,10 +927,11 @@ export default function Site() {
       {/* STICKY DIVISION RAIL */}
       <div className={'rail' + (rail && !menu ? ' show' : '')}>
         {DIVISIONS.map((x) => (
-          <button
-            key={x.key} type="button" style={{ '--dc': x.accRgb }}
-            className={x.key === active ? 'on' : ''} onClick={() => pick(x.key)}
-          >{x.short}</button>
+          <a
+            key={x.key} href={divHref(x)} style={{ '--dc': x.accRgb }}
+            aria-current={x.key === active ? 'page' : undefined}
+            className={x.key === active ? 'on' : ''} onClick={(e) => pick(e, x.key)}
+          >{x.short}</a>
         ))}
       </div>
     </div>
