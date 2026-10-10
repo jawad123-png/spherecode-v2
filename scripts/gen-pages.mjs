@@ -58,7 +58,7 @@ function breadcrumbLd(page, url) {
 
 const written = []
 for (const page of PAGES) {
-  const url = `${SITE}/${page.slug}`
+  const url = `${SITE}/${page.slug}/`   // trailing slash: that is what Netlify serves 200 on
   let html = swap(tpl, { title: page.title, desc: page.desc, url })
   html = html.replace('</head>', `  <script type="application/ld+json">\n${faqLd(page, url)}\n  </script>\n  <script type="application/ld+json">\n${breadcrumbLd(page, url)}\n  </script>\n</head>`)
   const dir = resolve(root, page.slug)
@@ -68,7 +68,7 @@ for (const page of PAGES) {
 }
 
 const today = new Date().toISOString().slice(0, 10)
-const urls = [{ loc: `${SITE}/`, pri: '1.0' }, ...PAGES.map((p) => ({ loc: `${SITE}/${p.slug}`, pri: '0.9' }))]
+const urls = [{ loc: `${SITE}/`, pri: '1.0' }, ...PAGES.map((p) => ({ loc: `${SITE}/${p.slug}/`, pri: '0.9' }))]
 writeFileSync(resolve(root, 'public/sitemap.xml'),
 `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

@@ -14,7 +14,7 @@ function routeKey() {
   for (const d of DIVISIONS) if (path.endsWith('/' + d.slug)) return d.key
   return null
 }
-const divHref = (d) => BASE + d.slug
+const divHref = (d) => BASE + d.slug + '/'
 
 /* Vite rewrites asset URLs in index.html but NOT string literals in JS, so any
    /images/... path has to be joined to the deploy base by hand or it 404s
