@@ -525,7 +525,10 @@ export default function Site() {
   }, [d, active])
 
   useEffect(() => {
-    const io = new IntersectionObserver((es) => { if (es[0].isIntersecting) { setLive(true); io.disconnect() } }, { threshold: 0.4 })
+    // threshold 0, not a ratio: the ratio is a fraction of the HERO, so any
+    // viewport shorter than ~2.5x the hero can never reach 0.4 and the stats
+    // would sit at 0 forever (a phone in landscape did exactly that)
+    const io = new IntersectionObserver((es) => { if (es[0].isIntersecting) { setLive(true); io.disconnect() } }, { threshold: 0 })
     if (heroRef.current) io.observe(heroRef.current)
     return () => io.disconnect()
   }, [])
