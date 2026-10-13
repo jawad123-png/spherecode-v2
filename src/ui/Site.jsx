@@ -28,11 +28,11 @@ const asset = (p) => import.meta.env.BASE_URL + String(p).replace(/^\//, '')
    in that division's accent; the other two drop back. */
 const HERO_LINES = ['WE BUILD IT.', 'WE RUN IT.', 'we staff it.']
 const ABOUT_LINES = ['STARTED ALONE.', 'BUILT A TEAM.', 'now a company.']
-const ABOUT_SUB = 'Founded by Jawad Ahmad in 2025 in Peshawar, Pakistan — from freelance work to a team of 11 to 20 across web development, BPO and virtual assistants.'
+const ABOUT_SUB = 'Founded by Jawad Ahmad in 2025 in Peshawar — now two offices, in Peshawar and Islamabad, and a team of 11 to 20 across web development, BPO and virtual assistants.'
 const ABOUT_STATS = [{ v: '2025', l: 'Founded' }, { v: '11–20', l: 'Team Today' }, { v: '3', l: 'Divisions' }]
 const CAREERS_LINES = ['BUILD IT.', 'RUN IT.', 'with us.']
-const CAREERS_SUB = 'We went from one freelancer in 2025 to a team of 11 to 20 in a year. Office in Saddar, Peshawar, clients worldwide, and applications read across all three divisions.'
-const CAREERS_STATS = [{ v: '11–20', l: 'Team Today' }, { v: '3', l: 'Divisions' }, { v: 'Peshawar', l: 'Office' }]
+const CAREERS_SUB = 'We went from one freelancer in 2025 to a team of 11 to 20 in a year. Offices in Peshawar and Islamabad, clients worldwide, and applications read across all three divisions.'
+const CAREERS_STATS = [{ v: '11–20', l: 'Team Today' }, { v: '3', l: 'Divisions' }, { v: '2', l: 'Offices' }]
 
 /* ---------------------------------------------------------------------
    Shared work + reviews.
@@ -548,7 +548,7 @@ const WHY_JOIN = [
   { t: 'Small enough that your work shows', d: 'Eleven to twenty people, not eleven hundred. What you build or fix is visible to the person who runs the company, not buried three layers down.' },
   { t: 'Three divisions, not one lane', d: 'Web development, BPO and virtual assistants sit under one roof. People who want to move between disciplines can, rather than having to change employer to change work.' },
   { t: 'A company still being built', d: 'We went from one freelancer in 2025 to a full team within a year. Early enough that how things are done is still up for discussion, and you get a say in it.' },
-  { t: 'Based in Peshawar, working worldwide', d: 'Our office is in Saddar. The clients are international, so the work is exposure to how businesses operate in other markets.' },
+  { t: 'Two offices, international clients', d: 'Saddar in Peshawar and F-11 Markaz in Islamabad. The clients are international, so the work is exposure to how businesses operate in other markets.' },
 ]
 
 function CareersSections({ sec }) {
@@ -618,7 +618,7 @@ function CareersSections({ sec }) {
               </p>
               <ul className="lm-list">
                 <li>Every application gets a reply</li>
-                <li>Office in Saddar, Peshawar</li>
+                <li>Offices in Peshawar (Saddar) and Islamabad (F-11 Markaz)</li>
                 <li>Shift patterns stated up front where they apply</li>
               </ul>
             </div>
@@ -1121,7 +1121,18 @@ export default function Site() {
             <h2 className="contact-h reveal">LET'S TALK<br />ABOUT YOUR<br /><span className="ital">project.</span></h2>
             <p className="contact-lede reveal">Fill in the form and we'll get back to you within 24 hours with next steps.</p>
             <div className="contact-detail mono reveal"><span className="ok">✉</span> contact@spherecode.dev</div>
-            <div className="contact-detail mono reveal"><span className="ok">◎</span> Peshawar, Pakistan · Serving clients worldwide</div>
+            <div className="contact-detail mono reveal"><span className="ok">☎</span> <a href="tel:+923250827062">0325 0827062</a></div>
+            <div className="contact-detail mono reveal"><span className="ok">◎</span> Two offices in Pakistan · Serving clients worldwide</div>
+            <div className="offices reveal">
+              <div className="office">
+                <h5 className="mono">Peshawar</h5>
+                <p>Cantonment Executive Office, Shopping Plaza,<br />A-Road Arbab Rd, Saddar, Peshawar 25000</p>
+              </div>
+              <div className="office">
+                <h5 className="mono">Islamabad</h5>
+                <p>Office No. 17, Crown Plaza,<br />F-11 Markaz, Islamabad</p>
+              </div>
+            </div>
           </div>
           <form
             className="cform reveal" action={FORM} method="POST" noValidate
@@ -1194,7 +1205,7 @@ export default function Site() {
         </div>
         <div className="foot-mark">SPHERECODE</div>
         <div className="foot-bottom mono">
-          <span>© 2026 SphereCode Solutions · Peshawar, Pakistan. All rights reserved.</span>
+          <span>© 2026 SphereCode Solutions · Peshawar &amp; Islamabad, Pakistan. All rights reserved.</span>
           <span><a href="#">Privacy Policy</a> · <a href="#">Terms of Service</a></span>
         </div>
       </footer>

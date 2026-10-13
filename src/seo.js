@@ -16,7 +16,7 @@ export const BRAND = 'SphereCode Solutions'
 export const HOME = {
   slug: '',
   title: 'SphereCode Solutions \u2014 Web Development, BPO & Virtual Assistants',
-  desc: 'SphereCode Solutions \u2014 websites and custom systems, dedicated offshore support teams, and vetted virtual assistants. Three divisions, one team.',
+  desc: 'SphereCode Solutions \u2014 websites and custom systems, dedicated offshore support teams, and vetted virtual assistants. Offices in Peshawar and Islamabad.',
   h1: 'SphereCode Solutions \u2014 web development, BPO services and virtual assistants',
 }
 
@@ -30,7 +30,7 @@ export const ABOUT = {
     ['Who founded SphereCode Solutions?',
      'Jawad Ahmad founded SphereCode Solutions in 2025, after working independently as a freelancer. What began as one person taking on client work is now a team running three divisions.'],
     ['Where is SphereCode Solutions based?',
-     'Peshawar, Pakistan. The team works from there and serves clients worldwide, with shift patterns arranged around each client\u2019s time zone.'],
+     'Two offices in Pakistan: Saddar, Peshawar, and Crown Plaza, F-11 Markaz, Islamabad. Both serve clients worldwide, with shift patterns arranged around each client\u2019s time zone.'],
     ['How big is the team?',
      'Between 11 and 20 people as of 2026, across web development, BPO services and virtual assistants. The company has been operating with a full team since early 2026.'],
     ['What does SphereCode Solutions do?',
@@ -40,14 +40,14 @@ export const ABOUT = {
 
 export const CAREERS = {
   slug: 'careers',
-  title: 'Careers at SphereCode Solutions | Jobs in Peshawar',
-  desc: 'Join SphereCode Solutions in Peshawar. We went from one freelancer in 2025 to a team of 11-20 across web development, BPO services and virtual assistants.',
-  h1: 'Careers at SphereCode Solutions \u2014 jobs in Peshawar, Pakistan',
+  title: 'Careers at SphereCode Solutions | Peshawar & Islamabad',
+  desc: 'Join SphereCode Solutions in Peshawar or Islamabad. We went from one freelancer in 2025 to a team of 11-20 across web development, BPO services and virtual assistants.',
+  h1: 'Careers at SphereCode Solutions \u2014 jobs in Peshawar and Islamabad, Pakistan',
   faq: [
     ['Is SphereCode Solutions hiring?',
      'We review applications on a rolling basis across all three divisions \u2014 web development, BPO services and virtual assistants. Send your CV even when no specific role is listed.'],
     ['Where is the job based?',
-     'Our office is in Saddar, Peshawar. Roles supporting clients in other time zones may involve shift work, which is always stated up front.'],
+     'We have two offices: Saddar in Peshawar, and F-11 Markaz in Islamabad. Roles supporting clients in other time zones may involve shift work, which is always stated up front.'],
     ['What is the team like?',
      'Small and growing. The company started in 2025 with one person and now runs 11 to 20 people, so individual work is visible rather than lost in a department.'],
     ['How do I apply?',
