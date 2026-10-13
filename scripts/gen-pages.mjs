@@ -13,7 +13,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { SITE, BRAND, HOME, PAGES } from '../src/seo.js'
+import { SITE, BRAND, HOME, PAGES, ABOUT } from '../src/seo.js'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const indexPath = resolve(root, 'index.html')
@@ -64,7 +64,7 @@ const tpl = swap(readFileSync(indexPath, 'utf8'), { title: HOME.title, desc: HOM
 writeFileSync(indexPath, tpl)
 
 const written = ['index.html']
-for (const page of PAGES) {
+for (const page of [...PAGES, ABOUT]) {
   const url = `${SITE}/${page.slug}/`   // trailing slash: that is what Netlify serves 200 on
   let html = swap(tpl, { title: page.title, desc: page.desc, url })
   html = html.replace('</head>', `  <script type="application/ld+json">\n${faqLd(page, url)}\n  </script>\n  <script type="application/ld+json">\n${breadcrumbLd(page, url)}\n  </script>\n</head>`)
@@ -75,7 +75,8 @@ for (const page of PAGES) {
 }
 
 const today = new Date().toISOString().slice(0, 10)
-const urls = [{ loc: `${SITE}/`, pri: '1.0' }, ...PAGES.map((p) => ({ loc: `${SITE}/${p.slug}/`, pri: '0.9' }))]
+const urls = [{ loc: `${SITE}/`, pri: '1.0' }, ...PAGES.map((p) => ({ loc: `${SITE}/${p.slug}/`, pri: '0.9' })),
+  { loc: `${SITE}/${ABOUT.slug}/`, pri: '0.7' }]
 writeFileSync(resolve(root, 'public/sitemap.xml'),
 `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

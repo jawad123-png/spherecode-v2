@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import HeroDashboard, { HeroOps, HeroDesk } from '../scene/HeroDashboard.jsx'
 import { DIVISIONS, BY_KEY } from './divisions.jsx'
+import { ABOUT } from '../seo.js'
 
 const FORM = 'https://formspree.io/f/xjglrypl'
 const BASE = import.meta.env.BASE_URL
@@ -11,6 +12,7 @@ const BASE = import.meta.env.BASE_URL
    the visitor. */
 function routeKey() {
   const path = window.location.pathname.replace(/\/+$/, '')
+  if (path.endsWith('/about')) return 'about'
   for (const d of DIVISIONS) if (path.endsWith('/' + d.slug)) return d.key
   return null
 }
@@ -24,6 +26,9 @@ const asset = (p) => import.meta.env.BASE_URL + String(p).replace(/^\//, '')
 /* Hero headline — one line per division. The active division's line lights up
    in that division's accent; the other two drop back. */
 const HERO_LINES = ['WE BUILD IT.', 'WE RUN IT.', 'we staff it.']
+const ABOUT_LINES = ['STARTED ALONE.', 'BUILT A TEAM.', 'now a company.']
+const ABOUT_SUB = 'Founded by Jawad Ahmad in 2025 in Peshawar, Pakistan — from freelance work to a team of 11 to 20 across web development, BPO and virtual assistants.'
+const ABOUT_STATS = [{ v: '2025', l: 'Founded' }, { v: '11–20', l: 'Team Today' }, { v: '3', l: 'Divisions' }]
 
 /* ---------------------------------------------------------------------
    Shared work + reviews.
@@ -397,17 +402,121 @@ function ClinicMock() {
   )
 }
 
+
+/* ===================== about ===================== */
+
+const STORY = [
+  { n: 'Freelancing', d: 'Jawad Ahmad takes on client work alone — websites and systems, one project at a time.', s: 'BEFORE 2025' },
+  { n: 'The company', d: 'The freelance work becomes SphereCode Solutions, registered and operating out of Peshawar.', s: '2025' },
+  { n: 'A full team', d: 'The first employees join. One person doing everything becomes a team with defined roles.', s: 'EARLY 2026' },
+  { n: 'Three divisions', d: '11 to 20 people across web development, BPO services and virtual assistants.', s: 'TODAY' },
+]
+
+const WHY = [
+  { t: 'Customer support worth having', d: 'Most outsourced support is a cost centre that treats customers like tickets. We started because it can be the opposite — the part of a business people actually remember.' },
+  { t: 'Sales that actually move', d: 'Qualified leads, followed up properly, by people who know the product. Not a script read at volume.' },
+  { t: 'Technology that fits the business', d: 'Not a template with your logo dropped on it. Systems built around how a business already works.' },
+]
+
+function AboutSections({ sec }) {
+  return (
+    <>
+      <section className="section" id="story">
+        <div className="sec-head mono"><span>{sec()}</span><span>Our Story</span></div>
+        <div className="mani-grid">
+          <p className="mani-note mono reveal">Founded in 2025 by Jawad Ahmad, in Peshawar, Pakistan. It started as one person freelancing, not as a plan for a company.</p>
+          <h2 className="mani-big reveal">One freelancer. <span className="stroke">Then a team.</span> Now three divisions.</h2>
+          <p className="mani-note r mono reveal">We have run with a full team since early 2026 — currently 11 to 20 people — and have grown every quarter since.</p>
+        </div>
+      </section>
+
+      <section className="section" id="timeline">
+        <div className="sec-head mono"><span>{sec()}</span><span>How We Got Here</span></div>
+        <div className="forms-table">
+          {STORY.map((f, i) => (
+            <div className="frow" key={f.n}>
+              <span className="fr-i mono">0{i + 1}</span>
+              <span className="fr-name">{f.n}</span>
+              <span className="fr-d">{f.d}</span>
+              <span className="fr-stat mono">{f.s}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="section" id="founder">
+        <div className="sec-head mono"><span>{sec()}</span><span>Founder</span></div>
+        <div className="split">
+          <div className="reveal">
+            <h2 className="split-big">Jawad <span className="ok">Ahmad</span></h2>
+            <p className="split-lede">Founder, SphereCode Solutions.</p>
+            <p className="about-bio">
+              Started out freelancing — building websites and systems for clients on his own. The work grew past what
+              one person could carry, so in 2025 it became a company. Since then the brief has widened from building
+              software to running the operations and staffing the admin behind it, which is how three divisions ended
+              up under one roof rather than one.
+            </p>
+            <p className="about-bio">
+              The company still works the way the freelancing did: a named person accountable for your account, and
+              reporting you can check rather than take on trust.
+            </p>
+            <div style={{ marginTop: 30 }}><a href="#contact" className="btn btn--primary">Talk to us</a></div>
+          </div>
+          {/* ---- SWAP IN A REAL PHOTO HERE ----
+              Replace this whole block with:
+                <img className="about-photo" src={asset('images/founder.jpg')} alt="Jawad Ahmad, founder of SphereCode Solutions" />
+              Drop the file at public/images/founder.jpg. Same for a team shot
+              on the story section above. A real face does more for a BPO or VA
+              buyer than anything written on this page. */}
+          <div className="about-photo about-photo--empty reveal" aria-hidden="true">
+            <span className="mono">PHOTO</span>
+            <em className="mono">founder portrait</em>
+          </div>
+        </div>
+      </section>
+
+      <section className="section" id="why-we-started">
+        <div className="sec-head mono"><span>{sec()}</span><span>Why We Started</span></div>
+        <div className="feat-list">
+          {WHY.map((f) => (
+            <div className="feat reveal" key={f.t}><i>✦</i><div><strong>{f.t}</strong><p>{f.d}</p></div></div>
+          ))}
+        </div>
+      </section>
+
+      <section className="section" id="divisions">
+        <div className="sec-head mono"><span>{sec()}</span><span>What We Do</span></div>
+        <div className="div-grid">
+          {DIVISIONS.map((x) => (
+            <a className="divc reveal" key={x.key} href={divHref(x)} style={{ '--dc': x.accRgb }}>
+              <span className="divc-top"><span className="divc-code">{x.code}</span><span className="divc-state">Visit</span></span>
+              <span className="glyphbox divc-glyph">{x.glyph}</span>
+              <span className="divc-verb">{x.verb}</span>
+              <span className="divc-name">{x.name}</span>
+              <span className="divc-blurb">{x.blurb}</span>
+              <span className="divc-foot">See this division <i>→</i></span>
+            </a>
+          ))}
+        </div>
+      </section>
+    </>
+  )
+}
+
 /* ===================== the page ===================== */
 
 export default function Site() {
   const [routed] = useState(() => routeKey())  // null on the home page
+  const isAbout = routed === 'about'
   const isHome = routed === null
-  const [active, setActive] = useState(routed || 'web')
+  // 'about' is a page, not a division, so keep a real division active for the
+  // accent palette and the shared nav/footer markup
+  const [active, setActive] = useState(routed && routed !== 'about' ? routed : 'web')
   const [typed, setTyped] = useState('')
   const [full, setFull] = useState('')
   const [live, setLive] = useState(false)
   const [menu, setMenu] = useState(false)
-  const [formDiv, setFormDiv] = useState(routed || 'web')
+  const [formDiv, setFormDiv] = useState(routed && routed !== 'about' ? routed : 'web')
   const [rail, setRail] = useState(false)
   const [faqOpen, setFaqOpen] = useState(-1)
   const [picked, setPicked] = useState(false)   // visitor chose a division themselves
@@ -421,7 +530,9 @@ export default function Site() {
   const cycling = isHome && !picked && heroIn
 
   const d = BY_KEY[active]
-  const NAV = [['Divisions', '#divisions'], ['Services', '#services'], ['Process', '#process'], ['Pricing', '#pricing'], [d.lead.nav, '#offer']]
+  const NAV = isAbout
+    ? [['Our Story', '#story'], ['Founder', '#founder'], ['Divisions', '#divisions'], ['Contact', '#contact']]
+    : [['Divisions', '#divisions'], ['Services', '#services'], ['Process', '#process'], ['Pricing', '#pricing'], [d.lead.nav, '#offer']]
 
   /* paint the active division's accent onto the whole document */
   useEffect(() => {
@@ -537,14 +648,14 @@ export default function Site() {
      Narrow screens get the short version so the hero stays one screen tall. */
   useEffect(() => {
     const narrow = window.matchMedia('(max-width:760px)').matches
-    const text = (narrow && d.typedShort) || d.typed
+    const text = isAbout ? ABOUT_SUB : ((narrow && d.typedShort) || d.typed)
     let i = 0, to
     setTyped(''); setFull(text)
     if (window.matchMedia('(prefers-reduced-motion:reduce)').matches) { setTyped(text); return }
     const tick = () => { i++; setTyped(text.slice(0, i)); if (i < text.length) to = setTimeout(tick, 7) }
     const start = setTimeout(tick, 220)
     return () => { clearTimeout(start); clearTimeout(to) }
-  }, [d, active])
+  }, [d, active, isAbout])
 
   useEffect(() => {
     // threshold 0, not a ratio: the ratio is a fraction of the HERO, so any
@@ -594,7 +705,7 @@ export default function Site() {
       </div>
 
       {/* HERO */}
-      <section className="hero" id="top" ref={heroRef}>
+      <section className={'hero' + (isAbout ? ' hero--about' : '')} id="top" ref={heroRef}>
         <div className="hero-inner">
           <div className="hero-left">
             <DivTabs active={active} cycling={cycling} onPick={pick} isHome={isHome} />
@@ -603,8 +714,10 @@ export default function Site() {
                   the heading a plain description of the page for crawlers and
                   screen readers — same text for both, nothing hidden from one
                   and shown to the other. */}
-              <span className="sr-only">{d.h1}</span>
-              {HERO_LINES.map((l, i) => (
+              <span className="sr-only">{isAbout ? ABOUT.h1 : d.h1}</span>
+              {isAbout ? ABOUT_LINES.map((l, i) => (
+                <span key={l} className={(i === 2 ? 'ital ' : '') + (i === 0 ? 'lit' : '')}>{l}</span>
+              )) : HERO_LINES.map((l, i) => (
                 <button
                   key={l} type="button" aria-label={'Show ' + DIVISIONS[i].name}
                   className={(i === 2 ? 'ital ' : '') + (i === d.line ? 'lit' : '')}
@@ -622,15 +735,15 @@ export default function Site() {
               <span className="care">▍</span>
             </p>
             <div className="hero-ctas">
-              <a href="#offer" className="btn btn--primary">{d.lead.nav} →</a>
+              <a href={isAbout ? '#contact' : '#offer'} className="btn btn--primary">{isAbout ? 'Talk to us' : d.lead.nav} →</a>
               <a href="#divisions" className="btn">Explore Divisions</a>
             </div>
           </div>
-          <div className="hero-right"><Panel key={active} /></div>
+          {!isAbout && <div className="hero-right"><Panel key={active} /></div>}
           {/* own grid cell so the panel can sit above it on a phone — the panel
               is the thing worth seeing and it was landing dead last */}
           <div className="hero-stats">
-            {d.stats.map((s) => <HeroStat key={s.l} s={s} run={live} />)}
+            {(isAbout ? ABOUT_STATS : d.stats).map((s) => <HeroStat key={s.l} s={s} run={live} />)}
           </div>
         </div>
         <a href="#divisions" className="scroll-cue mono">↓ &nbsp;SCROLL</a>
@@ -643,6 +756,7 @@ export default function Site() {
         </div>
       </div>
 
+      {isAbout ? <AboutSections sec={sec} /> : (<>
       {/* DIVISIONS — the switcher */}
       <section className="section" id="divisions">
         <div className="sec-head mono"><span>{sec()}</span><span>Three Divisions, One Team</span></div>
@@ -812,12 +926,14 @@ export default function Site() {
         </div>
       </section>
 
+      </>)}
+
       {/* FAQ — real questions people search for, and the answers stay in the
           DOM when collapsed so crawlers read them either way. */}
       <section className="section" id="faq">
-        <div className="sec-head mono"><span>{sec()}</span><span>Common Questions · {d.short}</span></div>
+        <div className="sec-head mono"><span>{sec()}</span><span>Common Questions · {isAbout ? 'About Us' : d.short}</span></div>
         <div className="faq swap" key={active + '-faq'}>
-          {d.faq.map(([q, a], i) => (
+          {(isAbout ? ABOUT : d).faq.map(([q, a], i) => (
             <div className={'faq-item' + (faqOpen === i ? ' on' : '')} key={q}>
               <button
                 type="button" className="faq-q" aria-expanded={faqOpen === i}
@@ -914,7 +1030,7 @@ export default function Site() {
                 <a key={x.key} href={divHref(x) + '#offer'} onClick={(e) => pick(e, x.key)}>{x.lead.label}</a>
               ))}
             </div>
-            <div className="fcol"><h5>Company</h5><a href="#work">Portfolio</a><a href="#pricing">Pricing</a><a href="#contact">Contact</a><a href="#top">Top ↑</a></div>
+            <div className="fcol"><h5>Company</h5><a href={BASE + 'about/'}>About Us</a><a href={BASE + '#work'}>Portfolio</a><a href="#contact">Contact</a><a href="#top">Top ↑</a></div>
           </div>
         </div>
         <div className="foot-mark">SPHERECODE</div>

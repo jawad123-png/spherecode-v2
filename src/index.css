@@ -1007,3 +1007,22 @@ body{
   .faq-a p{font-size:13.5px; padding:0 10px 22px}
   .faq-item.on .faq-a{max-height:460px}
 }
+
+/* ---- about page ---- */
+.about-bio{font-size:14px; line-height:1.8; color:var(--dim); max-width:56ch; margin-bottom:18px}
+.about-photo{border:1px solid var(--line); background:rgba(8,14,26,.5); aspect-ratio:4/5;
+  width:100%; max-width:420px; object-fit:cover; display:block}
+.about-photo--empty{display:grid; place-content:center; gap:10px; text-align:center;
+  background:radial-gradient(120% 120% at 50% 0%, rgba(var(--acc-rgb),.07), transparent 65%), rgba(8,14,26,.5)}
+.about-photo--empty span{font-size:11px; letter-spacing:.3em; color:rgba(var(--acc-rgb),.75)}
+.about-photo--empty em{font-style:normal; font-size:10px; letter-spacing:.14em; color:var(--faint)}
+@media(max-width:760px){.about-photo{max-width:none; aspect-ratio:3/4}}
+
+/* the About hero carries no dashboard panel, so it runs full width instead of
+   being squeezed into the left column of a two-column grid */
+@media(min-width:900px){
+  .hero--about .hero-inner{grid-template-columns:1fr}
+  .hero--about .hero-left,.hero--about .hero-stats{grid-column:1; max-width:900px}
+}
+.hero--about .hero-h{font-size:clamp(28px,4.4vw,58px)}
+@media(max-width:760px){.hero--about .hero-h{font-size:clamp(26px,8.2vw,44px)}}

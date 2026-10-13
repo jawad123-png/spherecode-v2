@@ -21,6 +21,7 @@ export default defineConfig(({ command }) => ({
         web: resolve(root, 'web/index.html'),
         bpo: resolve(root, 'bpo/index.html'),
         va: resolve(root, 'virtual-assistants/index.html'),
+        about: resolve(root, 'about/index.html'),
       },
     },
   },

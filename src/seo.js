@@ -20,6 +20,24 @@ export const HOME = {
   h1: 'SphereCode Solutions \u2014 web development, BPO services and virtual assistants',
 }
 
+/* Standalone pages that are not one of the three divisions. */
+export const ABOUT = {
+  slug: 'about',
+  title: 'About SphereCode Solutions | Founded in Peshawar',
+  desc: 'SphereCode Solutions was founded by Jawad Ahmad in 2025, growing from freelance work into a team of 11-20 across web development, BPO and virtual assistants.',
+  h1: 'About SphereCode Solutions \u2014 founded by Jawad Ahmad in Peshawar, Pakistan',
+  faq: [
+    ['Who founded SphereCode Solutions?',
+     'Jawad Ahmad founded SphereCode Solutions in 2025, after working independently as a freelancer. What began as one person taking on client work is now a team running three divisions.'],
+    ['Where is SphereCode Solutions based?',
+     'Peshawar, Pakistan. The team works from there and serves clients worldwide, with shift patterns arranged around each client\u2019s time zone.'],
+    ['How big is the team?',
+     'Between 11 and 20 people as of 2026, across web development, BPO services and virtual assistants. The company has been operating with a full team since early 2026.'],
+    ['What does SphereCode Solutions do?',
+     'Three things: builds websites and custom systems, runs outsourced business processes such as customer support and sales, and places managed virtual assistants.'],
+  ],
+}
+
 export const PAGES = [
   {
     key: 'web',
