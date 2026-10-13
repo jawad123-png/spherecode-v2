@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import HeroDashboard, { HeroOps, HeroDesk } from '../scene/HeroDashboard.jsx'
 import { DIVISIONS, BY_KEY } from './divisions.jsx'
-import { ABOUT } from '../seo.js'
+import { ABOUT, CAREERS } from '../seo.js'
 
 const FORM = 'https://formspree.io/f/xjglrypl'
 const BASE = import.meta.env.BASE_URL
@@ -13,6 +13,7 @@ const BASE = import.meta.env.BASE_URL
 function routeKey() {
   const path = window.location.pathname.replace(/\/+$/, '')
   if (path.endsWith('/about')) return 'about'
+  if (path.endsWith('/careers')) return 'careers'
   for (const d of DIVISIONS) if (path.endsWith('/' + d.slug)) return d.key
   return null
 }
@@ -29,6 +30,9 @@ const HERO_LINES = ['WE BUILD IT.', 'WE RUN IT.', 'we staff it.']
 const ABOUT_LINES = ['STARTED ALONE.', 'BUILT A TEAM.', 'now a company.']
 const ABOUT_SUB = 'Founded by Jawad Ahmad in 2025 in Peshawar, Pakistan — from freelance work to a team of 11 to 20 across web development, BPO and virtual assistants.'
 const ABOUT_STATS = [{ v: '2025', l: 'Founded' }, { v: '11–20', l: 'Team Today' }, { v: '3', l: 'Divisions' }]
+const CAREERS_LINES = ['BUILD IT.', 'RUN IT.', 'with us.']
+const CAREERS_SUB = 'We went from one freelancer in 2025 to a team of 11 to 20 in a year. Office in Saddar, Peshawar, clients worldwide, and applications read across all three divisions.'
+const CAREERS_STATS = [{ v: '11–20', l: 'Team Today' }, { v: '3', l: 'Divisions' }, { v: 'Peshawar', l: 'Office' }]
 
 /* ---------------------------------------------------------------------
    Shared work + reviews.
@@ -445,7 +449,7 @@ function AboutSections({ sec }) {
       </section>
 
       <section className="section" id="founder">
-        <div className="sec-head mono"><span>{sec()}</span><span>Founder</span></div>
+        <div className="sec-head mono"><span>{sec()}</span><span>Meet the Founder</span></div>
         <div className="split">
           <div className="reveal">
             <h2 className="split-big">Jawad <span className="ok">Ahmad</span></h2>
@@ -462,16 +466,43 @@ function AboutSections({ sec }) {
             </p>
             <div style={{ marginTop: 30 }}><a href="#contact" className="btn btn--primary">Talk to us</a></div>
           </div>
-          {/* ---- SWAP IN A REAL PHOTO HERE ----
-              Replace this whole block with:
-                <img className="about-photo" src={asset('images/founder.jpg')} alt="Jawad Ahmad, founder of SphereCode Solutions" />
-              Drop the file at public/images/founder.jpg. Same for a team shot
-              on the story section above. A real face does more for a BPO or VA
-              buyer than anything written on this page. */}
-          <div className="about-photo about-photo--empty reveal" aria-hidden="true">
-            <span className="mono">PHOTO</span>
-            <em className="mono">founder portrait</em>
-          </div>
+          <figure className="about-figure reveal">
+            <img
+              className="about-photo" src={asset('images/founder.png')} width="800" height="800" loading="lazy"
+              alt="Jawad Ahmad, founder of SphereCode Solutions, Peshawar"
+            />
+            <figcaption className="mono">Jawad Ahmad · Founder</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section className="section" id="mission">
+        <div className="sec-head mono"><span>{sec()}</span><span>The Dream &amp; The Mission</span></div>
+        <div className="reveal">
+          <h2 className="mani-big" style={{ maxWidth: '20ch', marginBottom: 30 }}>
+            I always wanted to build <span className="stroke">my own company.</span>
+          </h2>
+        </div>
+        <div className="mission-grid">
+          <p className="about-bio reveal">
+            Not an agency that does one thing and refers you elsewhere for the rest. Freelancing taught me that a
+            business rarely has just a website problem — it has a website problem, and a support problem, and far
+            too much admin. Those usually get bought from three different places, and nobody ends up accountable
+            for the whole thing.
+          </p>
+          <p className="about-bio reveal">
+            So SphereCode Solutions was built the other way round: three divisions under one roof, one team you can
+            hold responsible. That is the company I wanted to work with when I was doing it alone, and it is the
+            one we are still building.
+          </p>
+          <blockquote className="mission reveal">
+            <span className="mission-label mono">Our mission</span>
+            <p>
+              To give growing businesses the three things they actually need — technology that fits how they work,
+              customer relationships worth having, and the everyday weight taken off their hands — delivered by one
+              accountable team instead of three disconnected suppliers.
+            </p>
+          </blockquote>
         </div>
       </section>
 
@@ -503,20 +534,146 @@ function AboutSections({ sec }) {
   )
 }
 
+
+/* ===================== careers ===================== */
+
+/* ---- OPEN ROLES ----
+   Add real vacancies here and they render as a list; leave it empty and the
+   page shows a rolling-application message instead. Nothing is invented:
+   only put roles here that are genuinely open.
+     { t: 'Outbound Sales Representative', d: 'US market, night shift.', tag: 'BPO · Full-time' } */
+const ROLES = []
+
+const WHY_JOIN = [
+  { t: 'Small enough that your work shows', d: 'Eleven to twenty people, not eleven hundred. What you build or fix is visible to the person who runs the company, not buried three layers down.' },
+  { t: 'Three divisions, not one lane', d: 'Web development, BPO and virtual assistants sit under one roof. People who want to move between disciplines can, rather than having to change employer to change work.' },
+  { t: 'A company still being built', d: 'We went from one freelancer in 2025 to a full team within a year. Early enough that how things are done is still up for discussion, and you get a say in it.' },
+  { t: 'Based in Peshawar, working worldwide', d: 'Our office is in Saddar. The clients are international, so the work is exposure to how businesses operate in other markets.' },
+]
+
+function CareersSections({ sec }) {
+  const [st, setSt] = useState('idle')
+  const [err, setErr] = useState('')
+
+  const send = async (e) => {
+    e.preventDefault()
+    const f = new FormData(e.currentTarget)
+    setSt('busy'); setErr('')
+    try {
+      await post({
+        _subject: 'JOB APPLICATION — ' + (f.get('role') || 'General'),
+        lead_magnet: 'Careers application',
+        ...Object.fromEntries(f.entries()),
+      })
+      setSt('sent')
+    } catch { setSt('idle'); setErr('Could not send — please email contact@spherecode.dev instead.') }
+  }
+
+  return (
+    <>
+      <section className="section" id="why-join">
+        <div className="sec-head mono"><span>{sec()}</span><span>Why Join Us</span></div>
+        <div className="feat-list">
+          {WHY_JOIN.map((f) => (
+            <div className="feat reveal" key={f.t}><i>✦</i><div><strong>{f.t}</strong><p>{f.d}</p></div></div>
+          ))}
+        </div>
+      </section>
+
+      <section className="section" id="roles">
+        <div className="sec-head mono"><span>{sec()}</span><span>Open Roles</span></div>
+        {ROLES.length === 0 ? (
+          <div className="reveal">
+            <h2 className="forms-title">WE HIRE AS<br /><span className="stroke">WE GROW</span></h2>
+            <p className="forms-sub mono">
+              Nothing specific is listed right now, but we take people on across all three divisions as the
+              company grows, and we read every application that comes in. Send your details below and we will
+              come back to you when something fits.
+            </p>
+          </div>
+        ) : (
+          <div className="forms-table">
+            {ROLES.map((r, i) => (
+              <div className="frow" key={r.t}>
+                <span className="fr-i mono">R-0{i + 1}</span>
+                <span className="fr-name">{r.t}</span>
+                <span className="fr-d">{r.d}</span>
+                <span className="fr-stat mono">{r.tag}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="section" id="apply">
+        <div className="sec-head mono"><span>{sec()}</span><span>Apply</span></div>
+        <div className="lm">
+          <div className="lm-grid">
+            <div className="reveal">
+              <div className="lm-kicker mono"><span className="d" />Rolling Applications</div>
+              <h2 className="lm-h">SEND US YOUR <em>CV</em></h2>
+              <p className="lm-sub">
+                Tell us which division interests you and link your CV or portfolio. If there is nothing open that
+                fits, we keep applications on file rather than deleting them.
+              </p>
+              <ul className="lm-list">
+                <li>Every application gets a reply</li>
+                <li>Office in Saddar, Peshawar</li>
+                <li>Shift patterns stated up front where they apply</li>
+              </ul>
+            </div>
+            <div className="reveal">
+              <div className="lm-box">
+                <div className="lm-box-h mono">Application</div>
+                {st === 'sent' ? (
+                  <div className="lm-ok"><i>✓</i><p><b>Application received.</b><br />We read every one and will come back to you.</p></div>
+                ) : (
+                  <form className="cform" style={{ border: 0, background: 'none', padding: 0 }} onSubmit={send}>
+                    <div className="frow2">
+                      <div className="fg"><label htmlFor="cv-name">Name *</label><input id="cv-name" name="name" placeholder="Your name" required /></div>
+                      <div className="fg"><label htmlFor="cv-email">Email *</label><input id="cv-email" name="email" type="email" placeholder="you@email.com" required /></div>
+                    </div>
+                    <div className="fg">
+                      <label htmlFor="cv-role">Which division? *</label>
+                      <select id="cv-role" name="role" required defaultValue="">
+                        <option value="" disabled>Select a division</option>
+                        <option>Web Development</option><option>BPO Services</option>
+                        <option>Virtual Assistants</option><option>Open to anything</option>
+                      </select>
+                    </div>
+                    <div className="fg"><label htmlFor="cv-link">Link to CV or portfolio *</label><input id="cv-link" name="cv" placeholder="Google Drive, LinkedIn or portfolio URL" required /></div>
+                    <div className="fg"><label htmlFor="cv-note">Anything else</label><textarea id="cv-note" name="note" rows="3" placeholder="Experience, availability, notice period" /></div>
+                    <button type="submit" className="btn btn--primary btn--full" disabled={st === 'busy'}>
+                      {st === 'busy' ? 'Sending…' : 'Send Application →'}
+                    </button>
+                    {err && <div className="lm-err">{err}</div>}
+                  </form>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
+  )
+}
+
 /* ===================== the page ===================== */
 
 export default function Site() {
   const [routed] = useState(() => routeKey())  // null on the home page
   const isAbout = routed === 'about'
+  const isCareers = routed === 'careers'
+  const isPage = routed === 'about' || routed === 'careers'
   const isHome = routed === null
   // 'about' is a page, not a division, so keep a real division active for the
   // accent palette and the shared nav/footer markup
-  const [active, setActive] = useState(routed && routed !== 'about' ? routed : 'web')
+  const [active, setActive] = useState(routed && !['about', 'careers'].includes(routed) ? routed : 'web')
   const [typed, setTyped] = useState('')
   const [full, setFull] = useState('')
   const [live, setLive] = useState(false)
   const [menu, setMenu] = useState(false)
-  const [formDiv, setFormDiv] = useState(routed && routed !== 'about' ? routed : 'web')
+  const [formDiv, setFormDiv] = useState(routed && !['about', 'careers'].includes(routed) ? routed : 'web')
   const [rail, setRail] = useState(false)
   const [faqOpen, setFaqOpen] = useState(-1)
   const [picked, setPicked] = useState(false)   // visitor chose a division themselves
@@ -530,8 +687,10 @@ export default function Site() {
   const cycling = isHome && !picked && heroIn
 
   const d = BY_KEY[active]
-  const NAV = isAbout
-    ? [['Our Story', '#story'], ['Founder', '#founder'], ['Divisions', '#divisions'], ['Contact', '#contact']]
+  const NAV = isCareers
+    ? [['Why Join', '#why-join'], ['Open Roles', '#roles'], ['Apply', '#apply'], ['About', BASE + 'about/']]
+    : isAbout
+    ? [['Our Story', '#story'], ['Founder', '#founder'], ['Mission', '#mission'], ['Divisions', '#divisions']]
     : [['Divisions', '#divisions'], ['Services', '#services'], ['Process', '#process'], ['Pricing', '#pricing'], [d.lead.nav, '#offer']]
 
   /* paint the active division's accent onto the whole document */
@@ -648,14 +807,14 @@ export default function Site() {
      Narrow screens get the short version so the hero stays one screen tall. */
   useEffect(() => {
     const narrow = window.matchMedia('(max-width:760px)').matches
-    const text = isAbout ? ABOUT_SUB : ((narrow && d.typedShort) || d.typed)
+    const text = isCareers ? CAREERS_SUB : isAbout ? ABOUT_SUB : ((narrow && d.typedShort) || d.typed)
     let i = 0, to
     setTyped(''); setFull(text)
     if (window.matchMedia('(prefers-reduced-motion:reduce)').matches) { setTyped(text); return }
     const tick = () => { i++; setTyped(text.slice(0, i)); if (i < text.length) to = setTimeout(tick, 7) }
     const start = setTimeout(tick, 220)
     return () => { clearTimeout(start); clearTimeout(to) }
-  }, [d, active, isAbout])
+  }, [d, active, isAbout, isCareers])
 
   useEffect(() => {
     // threshold 0, not a ratio: the ratio is a fraction of the HERO, so any
@@ -705,7 +864,7 @@ export default function Site() {
       </div>
 
       {/* HERO */}
-      <section className={'hero' + (isAbout ? ' hero--about' : '')} id="top" ref={heroRef}>
+      <section className={'hero' + (isPage ? ' hero--about' : '')} id="top" ref={heroRef}>
         <div className="hero-inner">
           <div className="hero-left">
             <DivTabs active={active} cycling={cycling} onPick={pick} isHome={isHome} />
@@ -714,8 +873,8 @@ export default function Site() {
                   the heading a plain description of the page for crawlers and
                   screen readers — same text for both, nothing hidden from one
                   and shown to the other. */}
-              <span className="sr-only">{isAbout ? ABOUT.h1 : d.h1}</span>
-              {isAbout ? ABOUT_LINES.map((l, i) => (
+              <span className="sr-only">{isPage ? (isCareers ? CAREERS : ABOUT).h1 : d.h1}</span>
+              {isPage ? (isCareers ? CAREERS_LINES : ABOUT_LINES).map((l, i) => (
                 <span key={l} className={(i === 2 ? 'ital ' : '') + (i === 0 ? 'lit' : '')}>{l}</span>
               )) : HERO_LINES.map((l, i) => (
                 <button
@@ -735,15 +894,15 @@ export default function Site() {
               <span className="care">▍</span>
             </p>
             <div className="hero-ctas">
-              <a href={isAbout ? '#contact' : '#offer'} className="btn btn--primary">{isAbout ? 'Talk to us' : d.lead.nav} →</a>
+              <a href={isCareers ? '#apply' : isAbout ? '#contact' : '#offer'} className="btn btn--primary">{isCareers ? 'Apply now' : isAbout ? 'Talk to us' : d.lead.nav} →</a>
               <a href="#divisions" className="btn">Explore Divisions</a>
             </div>
           </div>
-          {!isAbout && <div className="hero-right"><Panel key={active} /></div>}
+          {!isPage && <div className="hero-right"><Panel key={active} /></div>}
           {/* own grid cell so the panel can sit above it on a phone — the panel
               is the thing worth seeing and it was landing dead last */}
           <div className="hero-stats">
-            {(isAbout ? ABOUT_STATS : d.stats).map((s) => <HeroStat key={s.l} s={s} run={live} />)}
+            {(isCareers ? CAREERS_STATS : isAbout ? ABOUT_STATS : d.stats).map((s) => <HeroStat key={s.l} s={s} run={live} />)}
           </div>
         </div>
         <a href="#divisions" className="scroll-cue mono">↓ &nbsp;SCROLL</a>
@@ -756,7 +915,7 @@ export default function Site() {
         </div>
       </div>
 
-      {isAbout ? <AboutSections sec={sec} /> : (<>
+      {isCareers ? <CareersSections sec={sec} /> : isAbout ? <AboutSections sec={sec} /> : (<>
       {/* DIVISIONS — the switcher */}
       <section className="section" id="divisions">
         <div className="sec-head mono"><span>{sec()}</span><span>Three Divisions, One Team</span></div>
@@ -931,9 +1090,9 @@ export default function Site() {
       {/* FAQ — real questions people search for, and the answers stay in the
           DOM when collapsed so crawlers read them either way. */}
       <section className="section" id="faq">
-        <div className="sec-head mono"><span>{sec()}</span><span>Common Questions · {isAbout ? 'About Us' : d.short}</span></div>
+        <div className="sec-head mono"><span>{sec()}</span><span>Common Questions · {isCareers ? 'Careers' : isAbout ? 'About Us' : d.short}</span></div>
         <div className="faq swap" key={active + '-faq'}>
-          {(isAbout ? ABOUT : d).faq.map(([q, a], i) => (
+          {(isCareers ? CAREERS : isAbout ? ABOUT : d).faq.map(([q, a], i) => (
             <div className={'faq-item' + (faqOpen === i ? ' on' : '')} key={q}>
               <button
                 type="button" className="faq-q" aria-expanded={faqOpen === i}
@@ -1030,7 +1189,7 @@ export default function Site() {
                 <a key={x.key} href={divHref(x) + '#offer'} onClick={(e) => pick(e, x.key)}>{x.lead.label}</a>
               ))}
             </div>
-            <div className="fcol"><h5>Company</h5><a href={BASE + 'about/'}>About Us</a><a href={BASE + '#work'}>Portfolio</a><a href="#contact">Contact</a><a href="#top">Top ↑</a></div>
+            <div className="fcol"><h5>Company</h5><a href={BASE + 'about/'}>About Us</a><a href={BASE + 'careers/'}>Careers</a><a href={BASE + '#work'}>Portfolio</a><a href="#contact">Contact</a><a href="#top">Top ↑</a></div>
           </div>
         </div>
         <div className="foot-mark">SPHERECODE</div>

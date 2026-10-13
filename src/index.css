@@ -1010,8 +1010,6 @@ body{
 
 /* ---- about page ---- */
 .about-bio{font-size:14px; line-height:1.8; color:var(--dim); max-width:56ch; margin-bottom:18px}
-.about-photo{border:1px solid var(--line); background:rgba(8,14,26,.5); aspect-ratio:4/5;
-  width:100%; max-width:420px; object-fit:cover; display:block}
 .about-photo--empty{display:grid; place-content:center; gap:10px; text-align:center;
   background:radial-gradient(120% 120% at 50% 0%, rgba(var(--acc-rgb),.07), transparent 65%), rgba(8,14,26,.5)}
 .about-photo--empty span{font-size:11px; letter-spacing:.3em; color:rgba(var(--acc-rgb),.75)}
@@ -1026,3 +1024,20 @@ body{
 }
 .hero--about .hero-h{font-size:clamp(28px,4.4vw,58px)}
 @media(max-width:760px){.hero--about .hero-h{font-size:clamp(26px,8.2vw,44px)}}
+
+/* ---- founder photo + mission ---- */
+.about-figure{margin:0; width:100%; max-width:420px}
+.about-photo{border:1px solid var(--line); background:rgba(8,14,26,.5); aspect-ratio:1/1;
+  width:100%; height:auto; object-fit:cover; display:block; filter:grayscale(.15) contrast(1.04)}
+.about-figure figcaption{margin-top:12px; font-size:10.5px; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--faint)}
+@media(max-width:760px){.about-figure{max-width:none}}
+
+.mission-grid{display:grid; gap:20px; max-width:62ch}
+.mission{margin:14px 0 0; border-left:2px solid var(--cyan); padding:22px 0 22px 24px;
+  background:linear-gradient(90deg, rgba(var(--acc-rgb),.06), transparent 70%)}
+.mission-label{display:block; font-size:10px; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--cyan); margin-bottom:12px}
+.mission p{font-family:'Syne',sans-serif; font-weight:600; font-size:clamp(16px,2.1vw,22px);
+  line-height:1.55; letter-spacing:-.01em; color:var(--ink)}
+@media(max-width:760px){.mission{padding:18px 0 18px 18px}}

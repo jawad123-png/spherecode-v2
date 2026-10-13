@@ -38,6 +38,23 @@ export const ABOUT = {
   ],
 }
 
+export const CAREERS = {
+  slug: 'careers',
+  title: 'Careers at SphereCode Solutions | Jobs in Peshawar',
+  desc: 'Join SphereCode Solutions in Peshawar. We went from one freelancer in 2025 to a team of 11-20 across web development, BPO services and virtual assistants.',
+  h1: 'Careers at SphereCode Solutions \u2014 jobs in Peshawar, Pakistan',
+  faq: [
+    ['Is SphereCode Solutions hiring?',
+     'We review applications on a rolling basis across all three divisions \u2014 web development, BPO services and virtual assistants. Send your CV even when no specific role is listed.'],
+    ['Where is the job based?',
+     'Our office is in Saddar, Peshawar. Roles supporting clients in other time zones may involve shift work, which is always stated up front.'],
+    ['What is the team like?',
+     'Small and growing. The company started in 2025 with one person and now runs 11 to 20 people, so individual work is visible rather than lost in a department.'],
+    ['How do I apply?',
+     'Send your details through the form on this page, including a link to your CV or portfolio. We reply to every application.'],
+  ],
+}
+
 export const PAGES = [
   {
     key: 'web',
