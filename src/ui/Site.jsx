@@ -846,7 +846,7 @@ export default function Site() {
             <h2 className="contact-h reveal">LET'S TALK<br />ABOUT YOUR<br /><span className="ital">project.</span></h2>
             <p className="contact-lede reveal">Fill in the form and we'll get back to you within 24 hours with next steps.</p>
             <div className="contact-detail mono reveal"><span className="ok">✉</span> contact@spherecode.dev</div>
-            <div className="contact-detail mono reveal"><span className="ok">◎</span> Remote-first · Available worldwide</div>
+            <div className="contact-detail mono reveal"><span className="ok">◎</span> Peshawar, Pakistan · Serving clients worldwide</div>
           </div>
           <form
             className="cform reveal" action={FORM} method="POST" noValidate
@@ -919,7 +919,7 @@ export default function Site() {
         </div>
         <div className="foot-mark">SPHERECODE</div>
         <div className="foot-bottom mono">
-          <span>© 2026 SphereCode Solutions. All rights reserved.</span>
+          <span>© 2026 SphereCode Solutions · Peshawar, Pakistan. All rights reserved.</span>
           <span><a href="#">Privacy Policy</a> · <a href="#">Terms of Service</a></span>
         </div>
       </footer>
