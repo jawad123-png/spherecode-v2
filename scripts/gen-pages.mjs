@@ -16,7 +16,7 @@ import { fileURLToPath } from 'node:url'
 import { SITE, BRAND, HOME, PAGES } from '../src/seo.js'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-const tpl = readFileSync(resolve(root, 'index.html'), 'utf8')
+const indexPath = resolve(root, 'index.html')
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 
 function swap(html, { title, desc, url }) {
@@ -56,7 +56,14 @@ function breadcrumbLd(page, url) {
   }, null, 2)
 }
 
-const written = []
+/* index.html is both the home page and the template for the others, so apply
+   HOME to it FIRST and write it back. Previously its tags were maintained by
+   hand and silently drifted out of step with src/seo.js — the home title kept
+   an old brand name while every subpage had the new one. */
+const tpl = swap(readFileSync(indexPath, 'utf8'), { title: HOME.title, desc: HOME.desc, url: SITE + '/' })
+writeFileSync(indexPath, tpl)
+
+const written = ['index.html']
 for (const page of PAGES) {
   const url = `${SITE}/${page.slug}/`   // trailing slash: that is what Netlify serves 200 on
   let html = swap(tpl, { title: page.title, desc: page.desc, url })

@@ -15,18 +15,18 @@ export const BRAND = 'SphereCode Solutions'
 
 export const HOME = {
   slug: '',
-  title: 'SphereCode \u2014 Web Development, BPO & Virtual Assistants',
-  desc: 'Websites and custom systems, dedicated offshore support teams, and vetted virtual assistants \u2014 three divisions, one team. Free audit, pilot or trial.',
-  h1: 'Web development, BPO services and virtual assistants',
+  title: 'SphereCode Solutions \u2014 Web Development, BPO & Virtual Assistants',
+  desc: 'SphereCode Solutions \u2014 websites and custom systems, dedicated offshore support teams, and vetted virtual assistants. Three divisions, one team.',
+  h1: 'SphereCode Solutions \u2014 web development, BPO services and virtual assistants',
 }
 
 export const PAGES = [
   {
     key: 'web',
     slug: 'web',
-    title: 'Web Development & Shopify Agency | SphereCode',
-    desc: 'Custom websites, Shopify stores, landing pages and web apps built to convert. Most projects live in 7-14 days. Free 60-second site audit.',
-    h1: 'Web development, Shopify stores and custom web apps',
+    title: 'Web Development & Shopify Agency | SphereCode Solutions',
+    desc: 'SphereCode Solutions builds custom websites, Shopify stores, landing pages and web apps that convert. Most projects live in 7-14 days. Free site audit.',
+    h1: 'SphereCode Solutions \u2014 web development, Shopify stores and custom web apps',
     faq: [
       ['How much does a website cost?',
        'Most clients invest between $1,000 and $3,000. Launch starts at $1,000 for up to 3 pages, Growth at $2,000 for e-commerce or booking systems, and Scale+ at $4,000 for advanced custom builds.'],
@@ -41,9 +41,9 @@ export const PAGES = [
   {
     key: 'bpo',
     slug: 'bpo',
-    title: 'BPO Services & Dedicated Offshore Teams | SphereCode',
-    desc: 'Dedicated offshore teams running your customer support, sales and back-office. Your tools, your SLAs, a named team lead. Most pods live in 14 days.',
-    h1: 'BPO services and dedicated offshore support teams',
+    title: 'BPO Services & Offshore Teams | SphereCode Solutions',
+    desc: 'SphereCode Solutions runs dedicated offshore teams for customer support, sales and back-office. Your tools, your SLAs, a named team lead. Live in 14 days.',
+    h1: 'SphereCode Solutions \u2014 BPO services and dedicated offshore support teams',
     faq: [
       ['What is BPO and what can you take over?',
        'Business process outsourcing means we run a process for you with our own staff. We cover customer support, inbound and outbound sales, back-office and data work, technical helpdesk, finance admin, and QA and reporting.'],
@@ -60,9 +60,9 @@ export const PAGES = [
   {
     key: 'va',
     slug: 'virtual-assistants',
-    title: 'Hire a Vetted Virtual Assistant | SphereCode',
-    desc: 'Vetted virtual assistants for admin, inbox, calendar, bookkeeping and research. Shortlisted in 72 hours, 20 free trial hours, managed by us throughout.',
-    h1: 'Virtual assistant services for admin, inbox and calendar',
+    title: 'Hire a Vetted Virtual Assistant | SphereCode Solutions',
+    desc: 'SphereCode Solutions matches you with vetted virtual assistants for admin, inbox, calendar and bookkeeping. Shortlisted in 72 hours, 20 free trial hours.',
+    h1: 'SphereCode Solutions \u2014 virtual assistant services for admin, inbox and calendar',
     faq: [
       ['How much does a virtual assistant cost?',
        'Priced monthly on hours and skill level, from part-time at 20 hours a week through full-time at 40 hours to a small team of specialised assistants. We quote against your actual task list, with no recruitment fee and no lock-in.'],

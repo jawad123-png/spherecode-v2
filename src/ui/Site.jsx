@@ -893,7 +893,7 @@ export default function Site() {
         <div className="foot-top">
           <div className="foot-brand">
             <img src={asset('images/spherecode-logo-nobg.png')} alt="SphereCode" />
-            <p>Three divisions, one team — we build your website, run your operations, and staff your admin.</p>
+            <p><strong>SphereCode Solutions</strong> — three divisions, one team. We build your website, run your operations, and staff your admin.</p>
             <div className="foot-social">
               {SOCIAL.map(({ n, href, I }) => (
                 <a key={n} href={href} target="_blank" rel="noopener noreferrer" aria-label={'SphereCode on ' + n} title={n}>
