@@ -23,6 +23,7 @@ export default defineConfig(({ command }) => ({
         va: resolve(root, 'virtual-assistants/index.html'),
         about: resolve(root, 'about/index.html'),
         careers: resolve(root, 'careers/index.html'),
+        aicontent: resolve(root, 'ai-content/index.html'),
       },
     },
   },

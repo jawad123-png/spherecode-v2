@@ -76,14 +76,14 @@ const BASE = [
     key: 'web',
     code: 'D-01',
     short: 'Web',
-    name: 'Web Development',
+    name: 'Web & Mobile',
     verb: 'We build it.',
     line: 0,                        // which hero headline line lights up
     accRgb: '55,224,255',           // cyan
     acc2Rgb: '143,123,255',         // violet
     glyph: <GlyphWeb />,
     navMid: 'WEB · APPS · SYSTEMS',
-    blurb: 'Websites, online stores and custom systems — designed to convert, built fast, and yours to own.',
+    blurb: 'Websites, mobile apps, online stores and custom systems — designed to convert, built fast, and yours to own.',
     panel: 'web',
     typedShort: 'Websites, Shopify stores and custom systems — built fast, built to convert.',
     typed: 'We design high-converting websites and build custom systems — Shopify stores, web apps and clinic management platforms — fast, modern, and built to drive real results.',
@@ -97,6 +97,7 @@ const BASE = [
     servicesLabel: 'What We Build',
     services: [
       { t: 'E-Commerce Websites', badge: 'Most Popular', d: 'Custom online stores with seamless checkout, inventory management and mobile-first design — built to convert browsers into buyers.' },
+      { t: 'Mobile Apps', d: 'iOS and Android apps, built cross-platform so one codebase ships to both stores — plus the APIs and admin behind them.' },
       { t: 'Landing Pages', d: 'High-converting single-page sites for launches, campaigns and lead generation — CRO-optimised, A/B ready, live in days.' },
       { t: 'Web Apps & Systems', d: 'Full custom systems — clinic & practice management, client portals, dashboards, booking and internal tools with auth, roles, reporting and backups, built to spec.' },
       { t: 'Brand & Design', d: 'Logo design, brand identity and visual systems so your whole online presence looks cohesive and professional.' },

@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import HeroDashboard, { HeroOps, HeroDesk } from '../scene/HeroDashboard.jsx'
 import { DIVISIONS, BY_KEY } from './divisions.jsx'
-import { ABOUT, CAREERS } from '../seo.js'
+import { ABOUT, CAREERS, AICONTENT } from '../seo.js'
 
 const FORM = 'https://formspree.io/f/xjglrypl'
 const BASE = import.meta.env.BASE_URL
@@ -14,6 +14,7 @@ function routeKey() {
   const path = window.location.pathname.replace(/\/+$/, '')
   if (path.endsWith('/about')) return 'about'
   if (path.endsWith('/careers')) return 'careers'
+  if (path.endsWith('/ai-content')) return 'aicontent'
   for (const d of DIVISIONS) if (path.endsWith('/' + d.slug)) return d.key
   return null
 }
@@ -31,6 +32,9 @@ const ABOUT_LINES = ['STARTED ALONE.', 'BUILT A TEAM.', 'now a company.']
 const ABOUT_SUB = 'Founded by Jawad Ahmad in 2025 in Peshawar — now two offices, in Peshawar and Islamabad, and a team of 11 to 20 across web development, BPO and virtual assistants.'
 const ABOUT_STATS = [{ v: '2025', l: 'Founded' }, { v: '11–20', l: 'Team Today' }, { v: '3', l: 'Divisions' }]
 const CAREERS_LINES = ['BUILD IT.', 'RUN IT.', 'with us.']
+const AI_LINES = ['WE DRAFT IT.', 'WE EDIT IT.', 'you publish it.']
+const AI_SUB = 'AI-drafted, human-edited content at volume — product descriptions, blogs, landing pages, social and email. For any business that needs good content faster than it can write it.'
+const AI_STATS = [{ v: '100s', l: 'Pieces Per Batch' }, { v: '100%', l: 'Human Edited' }, { v: '5', l: 'Free To Start' }]
 const CAREERS_SUB = 'We went from one freelancer in 2025 to a team of 11 to 20 in a year. Offices in Peshawar and Islamabad, clients worldwide, and applications read across all three divisions.'
 const CAREERS_STATS = [{ v: '11–20', l: 'Team Today' }, { v: '3', l: 'Divisions' }, { v: '2', l: 'Offices' }]
 
@@ -658,22 +662,154 @@ function CareersSections({ sec }) {
   )
 }
 
+
+/* ===================== ai content ===================== */
+
+const AI_WORK = [
+  { t: 'Product & Category Copy', d: 'Descriptions, category pages and specification tables at volume — hundreds of SKUs in days rather than weeks, in one consistent voice.' },
+  { t: 'Blog & Article Content', d: 'Long-form pieces researched around the questions your customers actually search, structured so they are useful rather than padded.' },
+  { t: 'Landing Page Copy', d: 'Headlines, benefit sections and calls to action written for one offer and one audience, with variants to test against each other.' },
+  { t: 'Social & Ad Creative', d: 'Captions, hooks and ad variations in bulk, so campaigns have enough to test with instead of one tired version.' },
+  { t: 'Email & Newsletters', d: 'Sequences, campaign sends and lifecycle emails drafted to a brief and edited before they reach your list.' },
+  { t: 'Rewrites & Clean-Up', d: 'Existing content brought up to standard — thin pages expanded, duplicate copy differentiated, inconsistent voice fixed.' },
+]
+
+const AI_HOW = [
+  { n: 'Brief & Voice', d: 'We take samples of how you already write, agree the tone, and build the prompt and style guide your content will be produced against.', s: 'DAY 0–2' },
+  { n: 'Sample Batch', d: 'A small batch first, so you can judge the real thing and correct the direction before volume work starts.', s: 'DAY 2–4' },
+  { n: 'Production', d: 'AI drafts at volume against the agreed brief. Every piece is read and edited by a person before it reaches you.', s: 'ONGOING' },
+  { n: 'Delivery & Revision', d: 'Delivered in whatever format you work in — CSV, CMS, Shopify import. Revisions included within the agreed scope.', s: 'ONGOING' },
+]
+
+function AiContentSections({ sec }) {
+  const [st, setSt] = useState('idle')
+  const [err, setErr] = useState('')
+
+  const send = async (e) => {
+    e.preventDefault()
+    const f = new FormData(e.currentTarget)
+    setSt('busy'); setErr('')
+    try {
+      await post({
+        _subject: 'AI CONTENT sample request — ' + (f.get('company') || ''),
+        division: 'AI Content', lead_magnet: 'Free content sample',
+        ...Object.fromEntries(f.entries()),
+      })
+      setSt('sent')
+    } catch { setSt('idle'); setErr('Could not send — please email contact@spherecode.dev instead.') }
+  }
+
+  return (
+    <>
+      <section className="section" id="services">
+        <div className="sec-head mono"><span>{sec()}</span><span>What We Write</span></div>
+        <div className="cap-list">
+          {AI_WORK.map((c, i) => (
+            <a href="#offer" className="cap-row reveal" key={c.t} onMouseMove={rowGlow}>
+              <span className="cap-i mono">0{i + 1}</span>
+              <span className="cap-name">{c.t}</span>
+              <span className="cap-d">{c.d}</span>
+              <span className="cap-arrow">↗</span>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <section className="section" id="how">
+        <div className="sec-head mono"><span>{sec()}</span><span>How It Works</span></div>
+        <h2 className="forms-title reveal">DRAFTED BY AI.<br /><span className="stroke">EDITED BY PEOPLE.</span></h2>
+        <p className="forms-sub mono reveal">
+          The AI is what makes the volume and the speed possible. <b>The editing is what makes it publishable.</b> We
+          do not hand over raw model output.
+        </p>
+        <div className="forms-table">
+          {AI_HOW.map((f, i) => (
+            <div className="frow" key={f.n}>
+              <span className="fr-i mono">P-0{i + 1}</span>
+              <span className="fr-name">{f.n}</span>
+              <span className="fr-d">{f.d}</span>
+              <span className="fr-stat mono">{f.s}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="section" id="offer">
+        <div className="sec-head mono"><span>{sec()}</span><span>Free Sample</span></div>
+        <div className="lm">
+          <div className="lm-grid">
+            <div className="reveal">
+              <div className="lm-kicker mono"><span className="d" />No Cost, No Commitment</div>
+              <h2 className="lm-h">FIVE PIECES, <em>WRITTEN FREE</em></h2>
+              <p className="lm-sub">
+                Send us five products, five article titles, or a page you want rewritten. We produce them to your
+                brief — drafted and then edited — and you judge the actual output rather than a promise about it.
+              </p>
+              <ul className="lm-list">
+                <li>Five pieces of real content, not a template</li>
+                <li>Written in your voice from samples you provide</li>
+                <li>Edited by a person, same as paid work</li>
+                <li>Yours to use whether you continue or not</li>
+              </ul>
+              <p className="lm-fine mono">
+                One sample set per business. If AI-assisted content is the wrong fit for what you need — technical,
+                legal or anything requiring genuine first-hand expertise — we will say so rather than sell it.
+              </p>
+            </div>
+            <div className="reveal">
+              <div className="lm-box">
+                <div className="lm-box-h mono">Request your sample</div>
+                {st === 'sent' ? (
+                  <div className="lm-ok"><i>✓</i><p><b>Sample request received.</b><br />We will come back within one working day to agree the brief, then send the five pieces.</p></div>
+                ) : (
+                  <form className="cform" style={{ border: 0, background: 'none', padding: 0 }} onSubmit={send}>
+                    <div className="frow2">
+                      <div className="fg"><label htmlFor="ai-name">Name *</label><input id="ai-name" name="name" placeholder="Jane Smith" required /></div>
+                      <div className="fg"><label htmlFor="ai-email">Email *</label><input id="ai-email" name="email" type="email" placeholder="jane@company.com" required /></div>
+                    </div>
+                    <div className="fg"><label htmlFor="ai-company">Company / website</label><input id="ai-company" name="company" placeholder="company.com" /></div>
+                    <div className="fg">
+                      <label htmlFor="ai-type">What should we write? *</label>
+                      <select id="ai-type" name="content_type" required defaultValue="">
+                        <option value="" disabled>Select content type</option>
+                        <option>Product descriptions</option><option>Blog or articles</option>
+                        <option>Landing page copy</option><option>Social or ad creative</option>
+                        <option>Email or newsletters</option><option>Rewrite existing content</option>
+                      </select>
+                    </div>
+                    <div className="fg"><label htmlFor="ai-brief">Brief *</label><textarea id="ai-brief" name="brief" rows="3" placeholder="Five products, five titles, or a link to the page you want rewritten" required /></div>
+                    <button type="submit" className="btn btn--primary btn--full" disabled={st === 'busy'}>
+                      {st === 'busy' ? 'Sending…' : 'Get 5 Pieces Free →'}
+                    </button>
+                    {err && <div className="lm-err">{err}</div>}
+                  </form>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
+  )
+}
+
 /* ===================== the page ===================== */
 
 export default function Site() {
   const [routed] = useState(() => routeKey())  // null on the home page
   const isAbout = routed === 'about'
   const isCareers = routed === 'careers'
-  const isPage = routed === 'about' || routed === 'careers'
+  const isAi = routed === 'aicontent'
+  const isPage = ['about', 'careers', 'aicontent'].includes(routed)
   const isHome = routed === null
   // 'about' is a page, not a division, so keep a real division active for the
   // accent palette and the shared nav/footer markup
-  const [active, setActive] = useState(routed && !['about', 'careers'].includes(routed) ? routed : 'web')
+  const [active, setActive] = useState(routed && !['about', 'careers', 'aicontent'].includes(routed) ? routed : 'web')
   const [typed, setTyped] = useState('')
   const [full, setFull] = useState('')
   const [live, setLive] = useState(false)
   const [menu, setMenu] = useState(false)
-  const [formDiv, setFormDiv] = useState(routed && !['about', 'careers'].includes(routed) ? routed : 'web')
+  const [formDiv, setFormDiv] = useState(routed && !['about', 'careers', 'aicontent'].includes(routed) ? routed : 'web')
   const [rail, setRail] = useState(false)
   const [faqOpen, setFaqOpen] = useState(-1)
   const [picked, setPicked] = useState(false)   // visitor chose a division themselves
@@ -687,7 +823,9 @@ export default function Site() {
   const cycling = isHome && !picked && heroIn
 
   const d = BY_KEY[active]
-  const NAV = isCareers
+  const NAV = isAi
+    ? [['What We Write', '#services'], ['How It Works', '#how'], ['Free Sample', '#offer'], ['Divisions', BASE]]
+    : isCareers
     ? [['Why Join', '#why-join'], ['Open Roles', '#roles'], ['Apply', '#apply'], ['About', BASE + 'about/']]
     : isAbout
     ? [['Our Story', '#story'], ['Founder', '#founder'], ['Mission', '#mission'], ['Divisions', '#divisions']]
@@ -807,14 +945,14 @@ export default function Site() {
      Narrow screens get the short version so the hero stays one screen tall. */
   useEffect(() => {
     const narrow = window.matchMedia('(max-width:760px)').matches
-    const text = isCareers ? CAREERS_SUB : isAbout ? ABOUT_SUB : ((narrow && d.typedShort) || d.typed)
+    const text = isAi ? AI_SUB : isCareers ? CAREERS_SUB : isAbout ? ABOUT_SUB : ((narrow && d.typedShort) || d.typed)
     let i = 0, to
     setTyped(''); setFull(text)
     if (window.matchMedia('(prefers-reduced-motion:reduce)').matches) { setTyped(text); return }
     const tick = () => { i++; setTyped(text.slice(0, i)); if (i < text.length) to = setTimeout(tick, 7) }
     const start = setTimeout(tick, 220)
     return () => { clearTimeout(start); clearTimeout(to) }
-  }, [d, active, isAbout, isCareers])
+  }, [d, active, isAbout, isCareers, isAi])
 
   useEffect(() => {
     // threshold 0, not a ratio: the ratio is a fraction of the HERO, so any
@@ -873,8 +1011,8 @@ export default function Site() {
                   the heading a plain description of the page for crawlers and
                   screen readers — same text for both, nothing hidden from one
                   and shown to the other. */}
-              <span className="sr-only">{isPage ? (isCareers ? CAREERS : ABOUT).h1 : d.h1}</span>
-              {isPage ? (isCareers ? CAREERS_LINES : ABOUT_LINES).map((l, i) => (
+              <span className="sr-only">{isPage ? (isAi ? AICONTENT : isCareers ? CAREERS : isAbout ? ABOUT : d).h1 : d.h1}</span>
+              {isPage ? (isAi ? AI_LINES : isCareers ? CAREERS_LINES : ABOUT_LINES).map((l, i) => (
                 <span key={l} className={(i === 2 ? 'ital ' : '') + (i === 0 ? 'lit' : '')}>{l}</span>
               )) : HERO_LINES.map((l, i) => (
                 <button
@@ -894,7 +1032,7 @@ export default function Site() {
               <span className="care">▍</span>
             </p>
             <div className="hero-ctas">
-              <a href={isCareers ? '#apply' : isAbout ? '#contact' : '#offer'} className="btn btn--primary">{isCareers ? 'Apply now' : isAbout ? 'Talk to us' : d.lead.nav} →</a>
+              <a href={isCareers ? '#apply' : isAbout ? '#contact' : '#offer'} className="btn btn--primary">{isAi ? 'Get 5 free' : isCareers ? 'Apply now' : isAbout ? 'Talk to us' : d.lead.nav} →</a>
               <a href="#divisions" className="btn">Explore Divisions</a>
             </div>
           </div>
@@ -902,7 +1040,7 @@ export default function Site() {
           {/* own grid cell so the panel can sit above it on a phone — the panel
               is the thing worth seeing and it was landing dead last */}
           <div className="hero-stats">
-            {(isCareers ? CAREERS_STATS : isAbout ? ABOUT_STATS : d.stats).map((s) => <HeroStat key={s.l} s={s} run={live} />)}
+            {(isAi ? AI_STATS : isCareers ? CAREERS_STATS : isAbout ? ABOUT_STATS : d.stats).map((s) => <HeroStat key={s.l} s={s} run={live} />)}
           </div>
         </div>
         <a href="#divisions" className="scroll-cue mono">↓ &nbsp;SCROLL</a>
@@ -915,7 +1053,7 @@ export default function Site() {
         </div>
       </div>
 
-      {isCareers ? <CareersSections sec={sec} /> : isAbout ? <AboutSections sec={sec} /> : (<>
+      {isAi ? <AiContentSections sec={sec} /> : isCareers ? <CareersSections sec={sec} /> : isAbout ? <AboutSections sec={sec} /> : (<>
       {/* DIVISIONS — the switcher */}
       <section className="section" id="divisions">
         <div className="sec-head mono"><span>{sec()}</span><span>Three Divisions, One Team</span></div>
@@ -1090,9 +1228,9 @@ export default function Site() {
       {/* FAQ — real questions people search for, and the answers stay in the
           DOM when collapsed so crawlers read them either way. */}
       <section className="section" id="faq">
-        <div className="sec-head mono"><span>{sec()}</span><span>Common Questions · {isCareers ? 'Careers' : isAbout ? 'About Us' : d.short}</span></div>
+        <div className="sec-head mono"><span>{sec()}</span><span>Common Questions · {isAi ? 'AI Content' : isCareers ? 'Careers' : isAbout ? 'About Us' : d.short}</span></div>
         <div className="faq swap" key={active + '-faq'}>
-          {(isCareers ? CAREERS : isAbout ? ABOUT : d).faq.map(([q, a], i) => (
+          {(isAi ? AICONTENT : isCareers ? CAREERS : isAbout ? ABOUT : d).faq.map(([q, a], i) => (
             <div className={'faq-item' + (faqOpen === i ? ' on' : '')} key={q}>
               <button
                 type="button" className="faq-q" aria-expanded={faqOpen === i}
@@ -1200,7 +1338,7 @@ export default function Site() {
                 <a key={x.key} href={divHref(x) + '#offer'} onClick={(e) => pick(e, x.key)}>{x.lead.label}</a>
               ))}
             </div>
-            <div className="fcol"><h5>Company</h5><a href={BASE + 'about/'}>About Us</a><a href={BASE + 'careers/'}>Careers</a><a href={BASE + '#work'}>Portfolio</a><a href="#contact">Contact</a><a href="#top">Top ↑</a></div>
+            <div className="fcol"><h5>Company</h5><a href={BASE + 'about/'}>About Us</a><a href={BASE + 'careers/'}>Careers</a><a href={BASE + 'ai-content/'}>AI Content</a><a href={BASE + '#work'}>Portfolio</a><a href="#contact">Contact</a><a href="#top">Top ↑</a></div>
           </div>
         </div>
         <div className="foot-mark">SPHERECODE</div>

@@ -55,13 +55,32 @@ export const CAREERS = {
   ],
 }
 
+export const AICONTENT = {
+  slug: 'ai-content',
+  title: 'AI Content Writing Services | SphereCode Solutions',
+  desc: 'AI-drafted, human-edited content at volume: product descriptions, blog posts, landing page copy, social and ad creative. For any business that needs content fast.',
+  h1: 'AI content writing services \u2014 product descriptions, blogs and landing page copy',
+  faq: [
+    ['What kind of content do you produce?',
+     'Product descriptions and category copy, blog and article content, landing page copy, social posts and ad creative, plus email and newsletter copy. Any industry, not only e-commerce.'],
+    ['Is it purely AI generated?',
+     'No. AI does the drafting, which is what makes volume and speed possible, and a person edits every piece before it reaches you — for accuracy, brand voice and anything the model got wrong. Unedited AI output is not something we would put our name on.'],
+    ['Will AI content hurt my search rankings?',
+     'Google does not penalise content for being AI-assisted; it penalises unhelpful, low-quality content however it was made. That is exactly why we edit rather than publish raw output, and why we will not take on work where volume is the only goal.'],
+    ['How much content can you turn around?',
+     'Volume is the point. Hundreds of product descriptions in days rather than weeks is normal. Turnaround depends on how much research each piece needs, which we agree before starting.'],
+    ['How is it priced?',
+     'Per piece or per batch, depending on length and how much research is involved. Send us a sample of what you need and we will quote against it.'],
+  ],
+}
+
 export const PAGES = [
   {
     key: 'web',
     slug: 'web',
-    title: 'Web Development & Shopify Agency | SphereCode Solutions',
-    desc: 'SphereCode Solutions builds custom websites, Shopify stores, landing pages and web apps that convert. Most projects live in 7-14 days. Free site audit.',
-    h1: 'SphereCode Solutions \u2014 web development, Shopify stores and custom web apps',
+    title: 'Web & Mobile App Development Agency | SphereCode Solutions',
+    desc: 'SphereCode Solutions builds custom websites, Shopify stores, mobile apps for iOS and Android, and web apps that convert. Most projects live in 7-14 days.',
+    h1: 'SphereCode Solutions \u2014 web development, mobile apps and Shopify stores',
     faq: [
       ['How much does a website cost?',
        'Most clients invest between $1,000 and $3,000. Launch starts at $1,000 for up to 3 pages, Growth at $2,000 for e-commerce or booking systems, and Scale+ at $4,000 for advanced custom builds.'],
@@ -69,7 +88,9 @@ export const PAGES = [
        'Most projects go live in 7 to 14 days. You see a working design in Figma and approve every page before a single line of code is written.'],
       ['Do you build Shopify stores and handle migrations?',
        'Yes. We build custom Shopify themes and migrate from WooCommerce, Wix or Squarespace with zero downtime and every SEO ranking preserved.'],
-      ['Can you build custom web apps, not just websites?',
+      ['Do you build mobile apps?',
+     'Yes. We build cross-platform iOS and Android apps from a single codebase, along with the APIs, admin panels and reporting behind them.'],
+    ['Can you build custom web apps, not just websites?',
        'Yes. We build full systems — client portals, dashboards, booking and internal tools with auth, roles, reporting and backups, including clinic and practice management platforms.'],
     ],
   },
