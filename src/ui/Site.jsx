@@ -100,6 +100,21 @@ function HeroStat({ s, run }) {
   )
 }
 
+/* Honeypot. A field no human sees or tabs into, that automated submitters
+   fill in anyway. Bots eat the Formspree quota and land in the inbox looking
+   like leads, which matters more once paid traffic is running. We drop them
+   here rather than relying on the endpoint, so a bot never costs a
+   submission against the monthly allowance. */
+function Honeypot() {
+  return (
+    <div className="hp" aria-hidden="true">
+      <label htmlFor="_gotcha">Leave this field empty</label>
+      <input id="_gotcha" type="text" name="_gotcha" tabIndex={-1} autoComplete="off" />
+    </div>
+  )
+}
+const isBot = (form) => Boolean(new FormData(form).get('_gotcha'))
+
 async function post(data) {
   const fd = new FormData()
   Object.entries(data).forEach(([k, v]) => fd.append(k, v))
@@ -272,6 +287,7 @@ function AuditMagnet({ d }) {
 
   const run = async (e) => {
     e.preventDefault()
+    if (isBot(e.currentTarget)) { setSt('sent'); return }
     if (!url.trim()) { setErr('Enter your website address first.'); return }
     if (!email.trim()) { setErr('We need an email to send the report to.'); return }
     setErr(''); setStep(0); setSt('scan')
@@ -280,7 +296,7 @@ function AuditMagnet({ d }) {
     try {
       await post({
         _subject: 'SITE AUDIT request — ' + url,
-        division: d.name, lead_magnet: 'Free Site Audit', website: url, email,
+        division: d.name, lead_magnet: 'Free Site Audit', website: url, email, _gotcha: '',
       })
     } catch { setErr('Could not send — please email contact@spherecode.dev instead.') }
   }
@@ -297,6 +313,7 @@ function AuditMagnet({ d }) {
       ) : (
         <>
           <form onSubmit={run}>
+            <Honeypot />
             <div className="fg"><label htmlFor="au-url">Your website *</label>
               <input id="au-url" placeholder="yourbusiness.com" value={url}
                 onChange={(e) => setUrl(e.target.value)} disabled={st !== 'idle'} autoComplete="url" />
@@ -336,6 +353,7 @@ function ApplyMagnet({ d }) {
 
   const send = async (e) => {
     e.preventDefault()
+    if (isBot(e.currentTarget)) { setSt('sent'); return }
     const f = new FormData(e.currentTarget)
     setSt('busy'); setErr('')
     try {
@@ -361,6 +379,7 @@ function ApplyMagnet({ d }) {
     <div className="lm-box">
       <div className="lm-box-h mono">{d.lead.boxH}</div>
       <form className="cform" style={{ border: 0, background: 'none', padding: 0 }} onSubmit={send}>
+        <Honeypot />
         <div className="frow2">
           <div className="fg"><label htmlFor="lm-name">Name *</label><input id="lm-name" name="name" placeholder="Jane Smith" required /></div>
           <div className="fg"><label htmlFor="lm-email">Email *</label><input id="lm-email" name="email" type="email" placeholder="jane@company.com" required /></div>
@@ -561,6 +580,7 @@ function CareersSections({ sec }) {
 
   const send = async (e) => {
     e.preventDefault()
+    if (isBot(e.currentTarget)) { setSt('sent'); return }
     const f = new FormData(e.currentTarget)
     setSt('busy'); setErr('')
     try {
@@ -633,6 +653,7 @@ function CareersSections({ sec }) {
                   <div className="lm-ok"><i>✓</i><p><b>Application received.</b><br />We read every one and will come back to you.</p></div>
                 ) : (
                   <form className="cform" style={{ border: 0, background: 'none', padding: 0 }} onSubmit={send}>
+                    <Honeypot />
                     <div className="frow2">
                       <div className="fg"><label htmlFor="cv-name">Name *</label><input id="cv-name" name="name" placeholder="Your name" required /></div>
                       <div className="fg"><label htmlFor="cv-email">Email *</label><input id="cv-email" name="email" type="email" placeholder="you@email.com" required /></div>
@@ -687,6 +708,7 @@ function AiContentSections({ sec }) {
 
   const send = async (e) => {
     e.preventDefault()
+    if (isBot(e.currentTarget)) { setSt('sent'); return }
     const f = new FormData(e.currentTarget)
     setSt('busy'); setErr('')
     try {
@@ -763,6 +785,7 @@ function AiContentSections({ sec }) {
                   <div className="lm-ok"><i>✓</i><p><b>Sample request received.</b><br />We will come back within one working day to agree the brief, then send the five pieces.</p></div>
                 ) : (
                   <form className="cform" style={{ border: 0, background: 'none', padding: 0 }} onSubmit={send}>
+                    <Honeypot />
                     <div className="frow2">
                       <div className="fg"><label htmlFor="ai-name">Name *</label><input id="ai-name" name="name" placeholder="Jane Smith" required /></div>
                       <div className="fg"><label htmlFor="ai-email">Email *</label><input id="ai-email" name="email" type="email" placeholder="jane@company.com" required /></div>
@@ -1277,6 +1300,7 @@ export default function Site() {
             onSubmit={async (e) => {
               e.preventDefault()
               const form = e.currentTarget
+              if (isBot(form)) { form.reset(); form.querySelector('.form-ok').classList.add('show'); return }
               const btn = form.querySelector('button[type=submit]')
               const ok = form.querySelector('.form-ok')
               btn.textContent = 'Sending…'
@@ -1287,6 +1311,7 @@ export default function Site() {
               } catch { btn.textContent = 'Something went wrong — try again' }
             }}
           >
+            <Honeypot />
             <div className="frow2">
               <div className="fg"><label htmlFor="fname">First Name *</label><input id="fname" name="fname" placeholder="Jane" required /></div>
               <div className="fg"><label htmlFor="lname">Last Name *</label><input id="lname" name="lname" placeholder="Smith" required /></div>
